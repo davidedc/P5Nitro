@@ -37,7 +37,7 @@ P5Nitro translates your sketches into Haxe source files. The haxe compiler then 
 
 Current state of affairs
 ------------------------
-P5Nitro is in its infancy. It needs TLC and forgiveness. It won't understand you all the times, so please be patient. Feel free to feed the project with suggestions or code submissions.
+P5Nitro is in its infancy. It needs TLC and forgiveness. It won't understand you all the times, so please be patient. Feel free to feed the project with suggestions or code submissions. That said, there are four apps in the App Store that have been coded in processing and used P5Nitro, and more are coming.
 
 Related projects
 ----------------
@@ -50,7 +50,7 @@ Related projects
 
 Where credit is due
 -------------------
-P5Nitro heavily relies on
+P5Nitro wishes to thank:
 
   - the **Haxe** community started by **Nicolas Cannasse**
   - the **hxcpp** and **nekonme** projects by **Hugh Sanderson**
