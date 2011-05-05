@@ -6,6 +6,21 @@ Overview
 
 P5Nitro turns your processing sketches into native code.
 
+How to use it
+----------------
+For using P5Nitro, three things are needed: Processing, Haxe and the nekonme library. For deploying on iOS, XCode is also needed. The general workflow looks as follows:
+
+  - Make a sketch using Processing. Some examples are in P5Nitro / data / inputFilesForTranslatorFolder
+  - When done, put the sketch in P5Nitro / data / inputFilesForTranslatorFolder
+  - Open P5Nitro.pde in Processing and tweak the paragraph that selects which sketch to translate
+  - Hit the play button
+  - The translated sketch and ready-made XCode project are now in the data folder of the sketch
+  - Open the XCode project with XCode and deploy
+
+It's also possible to make executables that work on windows/linux/osx and flash - manuals for those cases still have to be written.
+
+The bare truth
+--------------
 **Advantages**
 
   - faster than Java
@@ -22,7 +37,7 @@ P5Nitro turns your processing sketches into native code.
   - network (some)
   - basic 2D primitives
   - loading and writing files (some)
-  - mouse (or finger) input
+  - mouse (one finger) input
 
 **Missing features**
 
@@ -39,6 +54,10 @@ Current state of affairs
 ------------------------
 P5Nitro is in its infancy. It needs TLC and forgiveness. It won't understand you all the times, so please be patient. Feel free to feed the project with suggestions or code submissions. That said, there are four apps in the App Store that have been coded in processing and used P5Nitro, and more are coming.
 
+Keep in touch
+-------------
+P5Nitro contributors are on the haxe mailing list.
+
 Related projects
 ----------------
 
@@ -46,7 +65,9 @@ Related projects
 
 **hxOpenFrameworks** by Andy Li is a binding of the OpenFrameworks API for Haxe. It allows you to use Haxe (a clean garbage-collected language similar to javascript/actionscript) to use the great opengl-accelerated OpenFrameworks API.
 
-**OpenFrameworks and Cinder** are great and work on iOS devices. If you like C++ and don't mind doing memory management manually, then this is a great and fast solution for creative coding done natively.
+**OpenFrameworks and Cinder** are great and work on iOS devices. If you like C++ and don't mind doing memory management manually, then these are perfectly good solutions for creative coding done natively.
+
+**Processing.js** is a good solution that works on any device/platform with a browser supporting the canvas element. Performance on low-power devices is somewhat limited, but it's a broad implementation of the Processing language and API
 
 Where credit is due
 -------------------
