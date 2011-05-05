@@ -1,0 +1,21 @@
+import nme.Lib;
+import nme.events.MouseEvent;
+import nme.events.Event;
+import nme.display.DisplayObject;
+import nme.display.IGraphicsData;
+import nme.display.BitmapData;
+import nme.display.Bitmap;
+import nme.display.GradientType;
+import nme.display.Sprite;
+import nme.display.StageDisplayState;
+import nme.geom.Matrix;
+
+class PImage extends Bitmap{
+	
+    public function new( x : Int, y : Int ) {
+    	super();
+    	trace("creating BitmapData");
+        bitmapData = new BitmapData(x,y);
+    }
+}
+
