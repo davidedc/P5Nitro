@@ -1,0 +1,501 @@
+////////// start of PApplet methods
+
+
+	// you can't initialise PGraphics here because
+	// the whole environment is not initialised yet,
+	// i.e. for some reason the bitmap gets lost
+	// if you initialise it here
+	public static var g:PGraphicsRoot;
+	public static var frameCount:Int = 0;
+	public static var width:Int = 320;
+	public static var height:Int = 480;
+	public static var frameRate:Int = 60;
+	private static var millisecondsWhenSketchStarted:Int;
+	
+	// these two track how much time the app has been
+	// backgrounded. This is because millis() function should
+	// only take into account the time that the
+	// app has been fully alive
+	private static var timeStampOfLastDraw:Float;
+	private static var millisecondsTheAppHasSpentBackgrounded:Int;
+
+	public static var mousePressed:Bool;
+	public static var keyPressed:Bool;
+	public static var mouseX:Int = 0;
+	public static var mouseY:Int = 0;
+	public static var pmouseX:Int = 0;
+	public static var pmouseY:Int = 0;
+	
+	public static var PI:Float = 3.141592;
+	public static var TWO_PI:Float = 2*3.141592;
+	public static var HALF_PI:Float = 3.141592/2;
+	public static var P2D:Int = 2;
+	public static var P3D:Int = 3;
+	public static var CORNER:Int = 0;
+	public static var RADIUS:Int = 1;
+	public static var CENTER_RADIUS:Int = 1;
+	public static var CENTER:Int = 2;
+	public static var POLYGON:Int = 2;
+	public static var QUADS:Int = 5;
+	public static var TRIANGLES:Int = 6;
+	public static var POINTS:Int = 7;
+	public static var LINES:Int = 8;
+	public static var TRIANGLE_STRIP:Int = 9;
+	public static var TRIANGLE_FAN:Int = 4;
+	public static var QUAD_STRIP:Int = 3;
+	public static var CORNERS:Int = 10;
+	public static var CLOSE:Bool = true;
+	public static var RGB:Int = 1;
+	public static var HSB:Int = 2;
+
+	public static function exitArgCount0():Void {
+	   // in theory you could quit an application but
+	   // on iPhone it's not a good thing to do,
+	   // it's effectively a crash, so we just use
+	   // noLoop until we get a better idea
+	   noLoopArgCount0();
+	}
+
+	public static function powArgCount2(v:Float, exp:Float):Float {
+	   return Math.pow(v,exp);
+	}
+
+	public static function absArgCount1(v:Float):Float {
+	   return Math.abs(v);
+	}
+
+	public static function floorArgCount1(v:Float):Float {
+	   return Math.floor(v);
+	}
+
+	public static function yearArgCount0():Int {
+	   return Date.now().getFullYear();
+	}
+
+	public static function monthArgCount0():Int {
+	   return Date.now().getMonth() + 1;
+	}
+
+	public static function dayArgCount0():Int {
+	   return Date.now().getDate();
+	}
+
+	public static function hourArgCount0():Int {
+	   return Date.now().getHours();
+	}
+
+	public static function minuteArgCount0():Int {
+	   return Date.now().getMinutes();
+	}
+
+	public static function secondArgCount0():Int {
+	   return Date.now().getSeconds();
+	}
+
+	public static function pushMatrixArgCount0():Void {
+	   return g.pushMatrixArgCount0();
+	}
+
+	public static function popMatrixArgCount0():Void {
+	   return g.popMatrixArgCount0();
+	}
+
+	public static function millisArgCount0():Int {
+	   return Std.int(Timer.stamp()*1000) - millisecondsWhenSketchStarted - millisecondsTheAppHasSpentBackgrounded;
+	}
+	
+	public static function delayArgCount1(millisecondsToWait: Int) {
+			// busy wait - this is bad - use only for test purposes
+			// todo to make the "pure flash" equivalent, this one
+			// uses nme specific stuff
+	        var starttime:Float = nme.Timer.stamp() * 1000;
+	        
+	        // todo in case of opengl I think we should
+	        // also clear up the shapes, after we've rendered.
+			Lib.stage.nmeRender(false);
+
+	        if (millisecondsToWait > 200) {
+				while ( (Timer.stamp() * 1000 - starttime) < millisecondsToWait) {
+				    // at least let's do something useful
+					nme.system.System.gc();
+				}
+			}
+			else {
+				while ((nme.Timer.stamp()*1000 - starttime) < millisecondsToWait) {}
+			}
+	}
+
+		public static inline function frameRateArgCount1( theFrameRate:Int ):Void {
+			frameRate = theFrameRate;
+			Lib.stage.frameRate = theFrameRate;
+		}
+
+		public static inline function ellipseModeArgCount1( aEllipseMode:Int ):Void {
+			g.ellipseModeArgCount1( aEllipseMode );
+		}
+
+		public static inline function noLoopArgCount0( ):Void {
+			flash.Lib.current.removeEventListener(Event.ENTER_FRAME,Main.wholeDrawCycle);
+			Lib.stage.frameRate = 0.0000001;
+		}
+
+		public static inline function getArgCount2( x:Int, y:Int):Int {
+				return g.getArgCount2(x, y);
+		}
+	
+		public static inline function setArgCount3( x:Int, y:Int, color:Int ):Void {
+			//[TODO] should this instantly nullify pixels[] array?
+			g.setArgCount3(x, y, color);
+		}
+
+
+		public static inline function smoothArgCount0():Void{
+			//nme.display.stage.quality = nme.display.StageQuality.HIGH;
+			//Main.tweakStageQuality();
+			//Lib.stage.quality = nme.display.StageQuality.BEST;
+		}
+
+		public static inline function colorArgCount1(shadeOfGray:Int):Int {
+			return g.colorArgCount1(shadeOfGray);
+		}
+
+		public static inline function colorArgCount2(shadeOfGray:Int,a:Int):Int {
+			return g.colorArgCount2(shadeOfGray,a);
+		}
+
+		public static inline function colorArgCount3(r:Int,green:Int,b:Int):Int {
+			return g.colorArgCount3(r,green,b);
+		}
+
+		public static inline function colorArgCount4(r:Int,green:Int,b:Int,a:Int):Int {
+			return g.colorArgCount4(r,green,b,a);
+		}
+
+		public static inline function redArgCount1( aColor:Int ):Int
+		{
+			return g.redArgCount1( aColor );
+		}
+	
+		public static inline function greenArgCount1( aColor:Int ):Int
+		{
+			return g.greenArgCount1( aColor );
+		}
+	
+		public static inline function blueArgCount1( aColor:Int ):Int
+		{
+			return g.blueArgCount1( aColor );
+		}
+	
+		public static inline function alphaArgCount1( aColor:Int ):Int
+		{
+			return g.alphaArgCount1( aColor );
+		}
+
+
+    public static inline function endDrawArgCount0( ) {
+    	return g.endDrawArgCount0();
+    }
+
+    public static inline function beginDrawArgCount0( ) {
+    	return g.beginDrawArgCount0();
+    }
+    
+    public static inline function backgroundArgCount4(r:Int,green:Int,b:Int,a:Int) {
+    	return g.backgroundArgCount4(r,green,b,a);
+    }
+    
+    public static inline function backgroundArgCount3(r:Int,green:Int,b:Int) {
+    	return g.backgroundArgCount3(r,green,b);
+    }
+
+    public static inline function backgroundArgCount2(shadeOfGray:Int,a:Int) {
+    	return g.backgroundArgCount2(shadeOfGray,a);
+    }
+    
+    public static inline function backgroundArgCount1(shadeOfGray:Int) {
+    	return g.backgroundArgCount1(shadeOfGray);
+    }
+    
+    public static inline function backgroundArgCount0() {
+    	return g.backgroundArgCount0();
+    }
+
+    public static inline function imageArgCount3( img:PImage, x:Int , y:Int ) {
+			return g.imageArgCount3( img, x , y);
+	}
+	
+	public static inline function tintArgCount3( rc:Float, gc:Float, bc:Float )
+	{
+		g.tintArgCount3(rc,gc,bc);
+	}
+
+	public static inline function tintArgCount4( rc:Float, gc:Float, bc:Float, ac:Float )
+	{
+		g.tintArgCount4(rc,gc,bc,ac);
+	}
+
+	public static inline function noTintArgCount0()
+	{			
+		g.noTintArgCount0();
+	}
+
+    public static inline function createGraphicsArgCount3( w:Int, h:Int, type:Int):PGraphics {
+			return g.createGraphicsArgCount3(w, h, type);
+	}
+
+	public static inline function printlnArgCount1 ( theString:String): Void  {
+		 trace(theString);
+	}
+
+	public static inline function printArgCount1 ( theString:String): Void  {
+		 //trace(theString);
+	}
+	
+	public static inline function lineArgCount4( x1:Float = 0, y1:Float = 0, x2:Float = 0, y2:Float = 0):Void {
+		 g.lineArgCount4(x1,y1,x2,y2);
+	}
+	
+	public static inline function mapArgCount5( value:Float, istart:Float, istop:Float, ostart:Float, ostop:Float ):Float {
+		return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
+	}
+
+	public static inline function randomArgCount2( aMin: Float, aMax:Float  ):Float {
+			return g.randomArgCount2(aMin, aMax);
+	}
+
+	public static inline function sinArgCount1( aNumber: Float  ):Float {
+			return g.sinArgCount1(aNumber);
+	}
+
+	public static inline function cosArgCount1( aNumber: Float  ):Float {
+			return g.cosArgCount1(aNumber);
+	}
+	
+	public static inline function rectArgCount4( x1:Float = 0, y1:Float = 0, x2:Float = 0, y2:Float = 0):Void {
+		 g.rectArgCount4( x1, y1, x2, y2 );
+	}
+
+    public static inline function triangleArgCount6( x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float ){
+    	g.triangleArgCount6(x1,y1,x2,y2,x3,y3);
+    }
+    
+	public static inline function ellipseArgCount4( x1:Float = 0, y1:Float = 0, x2:Float = 0, y2:Float = 0):Void {
+		 g.ellipse( x1, y1, x2, y2 );
+	}
+
+	public static inline function noStrokeArgCount0() {
+		g.noStrokeArgCount0();
+	}
+
+	public static inline function strokeArgCount4( r:Float , green:Float , b:Float, a:Float ):Void {
+		 g.strokeArgCount4( Std.int(r),Std.int(green),Std.int(b),Std.int(a) );
+	}
+	public static inline function strokeArgCount3( theRed:Float , theGreen:Float , theBlue:Float ):Void {
+		 g.strokeArgCount3( Std.int(theRed), Std.int(theGreen), Std.int(theBlue) );
+	}
+	public static inline function strokeArgCount2( shade:Float , a:Float ):Void {
+		 g.strokeArgCount2( Std.int(shade), Std.int(a) );
+	}
+	public static inline function strokeArgCount1( shade:Float ):Void {
+		 g.strokeArgCount1( Std.int(shade) );
+	}
+
+	public static inline function noFillArgCount0():Void {
+		 g.noFillArgCount0();
+	}
+
+	public static inline function fillArgCount4( r:Float , green:Float , b:Float, a:Float ):Void {
+		 g.fillArgCount4( Std.int(r),Std.int(green),Std.int(b), Std.int(a) );
+	}
+	public static inline function fillArgCount3( r:Float , green:Float , b:Float ):Void {
+		 g.fillArgCount3( Std.int(r), Std.int(green), Std.int(b) );
+	}
+	public static inline function fillArgCount2( shade:Float , a:Float ):Void {
+		 g.fillArgCount2( Std.int(shade), Std.int(a) );
+	}
+	public static inline function fillArgCount1( shade:Float ):Void {
+		 g.fillArgCount1( Std.int(shade) );
+	}
+
+	public static inline function rotateArgCount1( aAngle:Float ):Void {
+		 g.rotateArgCount1( aAngle );
+	}
+	public static inline function scaleArgCount2( x:Float, y:Float ):Void
+	{
+		 g.scaleArgCount2(x,y);
+	}
+	public static inline function scaleArgCount1( xy:Float ):Void
+	{
+		 g.scaleArgCount1(xy);
+	}
+	public static inline function translateArgCount2( x:Float, y:Float ):Void
+	{
+		 g.translateArgCount2(x,y);
+	}
+	public static inline function intArgCount1( x:Float):Int
+	{
+		 return Std.int(x);
+	}
+	public static inline function strokeWeightArgCount1( w:Float ):Void
+	{
+		 return g.strokeWeightArgCount1(w);
+	}	
+	public static inline function pointArgCount2( x:Float, y:Float ):Void
+	{
+		 return g.pointArgCount2(x,y);
+	}	
+
+	public static inline function mouseUpCatcherFunction(event): Void{
+	    mousePressed = false;
+		pmouseX = Std.int(mouseX);
+		mouseX = Std.int(event.localX);
+
+		pmouseY = Std.int(mouseY);
+		mouseY = Std.int(event.localY);
+		
+		//trace("Mouse up at " + mouseX + ", "+ mouseY);
+		
+		//onlyIfMouseReleasedFunctionExists mouseReleasedArgCount0();
+
+	}
+
+	public static inline function mouseDownCatcherFunction(event): Void{
+		mousePressed = true;
+		pmouseX = Std.int(mouseX);
+		mouseX = Std.int(event.localX);
+
+		pmouseY = Std.int(mouseY);
+		mouseY = Std.int(event.localY);
+		
+		//trace("Mouse down at " + mouseX + ", "+ mouseY);
+		//onlyIfMousePressedFunctionExists mousePressedArgCount0();
+	}
+
+	public static inline function mouseMoveCatcherFunction(event): Void{
+		pmouseX = Std.int(mouseX);
+		mouseX = Std.int(event.localX);
+
+		pmouseY = Std.int(mouseY);
+		mouseY = Std.int(event.localY);
+		
+		
+		
+		//trace("Mouse move at " + mouseX + ", "+ mouseY);
+
+		//onlyIfMouseMovedFunctionExists if (!mousePressed) mouseMovedArgCount0();
+		//onlyIfMouseDraggedFunctionExists if (mousePressed) mouseDraggedArgCount0();
+	}
+
+	public static inline function mouseClickCatcherFunction(event): Void{
+		pmouseX = Std.int(mouseX);
+		mouseX = Std.int(event.localX);
+
+		pmouseY = Std.int(mouseY);
+		mouseY = Std.int(event.localY);
+		
+		//trace("Mouse click at " + mouseX + ", "+ mouseY);
+		
+		//onlyIfMouseClickedFunctionExists mouseClickedArgCount0();
+	}
+
+	public static inline function beginShapeArgCount0(): Void{
+		g.beginShapeArgCount0();
+	}
+
+	public static inline function beginShapeArgCount1(x:Int): Void{
+		g.beginShapeArgCount1(x);
+	}
+
+	public static inline function vertexArgCount2(x1:Float, y1:Float): Void{
+		g.vertexArgCount2(x1,y1);
+	}
+	public static inline function vertexArgCount4(x1:Float, y1:Float, x2:Float, y2:Float): Void{
+		g.vertexArgCount4(x1,y1,x2,y2);
+	}
+	public static inline function vertexArgCount6(x1:Float, y1:Float, x2:Float, y2:Float, x3:Float, y3:Float): Void{
+		g.vertexArgCount6(x1,y1,x2,y2,x3,y3);
+	}
+	public static inline function endShapeArgCount1(x:Bool): Void{
+		g.endShapeArgCount1(x);
+	}
+                
+	public static inline function bezierArgCount8( x1: Float, y1: Float, x2: Float, y2: Float, x3: Float, y3: Float, x4: Float, y4: Float ): Void {
+		g.bezierArgCount8( x1, y1, x2, y2, x3, y3, x4, y4);
+	}
+
+	public static inline function curveVertexArgCount2(x:Float, y:Float): Void{
+		g.curveVertexArgCount2(x,y);
+	}
+	
+	public static inline function endShapeArgCount0(): Void{
+		g.endShapeArgCount0();
+	}
+
+	public static inline function bezierVertexArgCount6(x:Float, y:Float, x2:Float, y2:Float, x3:Float, y3:Float ):Void {
+		g.bezierVertexArgCount6(x, y, x2, y2, x3, y3 );
+	}
+	public static inline function sizeArgCount2(x1:Float, y1:Float): Void{
+	}
+
+	public static function loadStringsArgCount1(x1:String): Array<String>{
+          //trace("about to read file: " + x1);
+          var ba:nme.utils.ByteArray = nme.utils.ByteArray.readFile(x1);
+          //trace("length of file: " + ba.length);
+          var dkdkd:String = ba.asString();
+          //trace("file contents: " + dkdkd);
+          var fetchedArray:Array<String> =  dkdkd.split("\\n");
+          
+		  // the last line should always be an empty line
+		  // so we just get rid of it
+		  var arrayToBeReturned:Array<String> =  new Array<String>();
+		  for (i in 0... (fetchedArray.length - 1) ) {
+			arrayToBeReturned[i] = fetchedArray[i];
+		  }
+		  
+		  return arrayToBeReturned;
+	}
+
+	public static function saveStringsArgCount2(fileName:String, arrayOfStrings:Array<String>):Void {
+	
+		// This bad hack takes away the reference to the data folder
+		// and it's due to two factors:
+		// 1) saveString saves in the sketch folder rather than
+		//    in the data folder (as it should be, if you ask me)
+		// 2) when we generate the XCode project file, we put all the files
+		//    of the data folder in the root and access them there
+		//    Such behaviour is OK for loading images and sounds and text
+		//    But for saving this fails, because suddenly the concept
+		//    of "data" directory pops up and we don't support it
+		// The proper solution would be to create an explicit data folder
+		// in the bundle and put the data files in there and keep the
+		// data file and the files in the root separate.
+		
+		if (fileName.indexOf("data/") == 0) {
+			fileName = fileName.substr(5);
+			trace("saving to data folder, simplifying the path to: "+ fileName);
+		}
+
+		if (fileName.indexOf("./data/") == 0) {
+			fileName = fileName.substr(7);
+			trace("saving to data folder, simplifying the path to: "+ fileName);
+		}
+		
+		// end of bad hack
+		
+		var theFinalString:String = "";
+		
+		// we combine the array of strings into one
+		for (i in 0...arrayOfStrings.length) {
+			theFinalString = theFinalString + arrayOfStrings[i] + "\\n";
+		}
+		
+		var ba:nme.utils.ByteArray = new nme.utils.ByteArray(0);
+		// COMMENTEDOUTBECAUSEOFwriteUTFBytesToBuffergetPixelAtERROR
+		//ba.writeUTFBytes(theFinalString);
+		
+		ba.writeFile(fileName);
+
+	}
+
+
+////////// end of PApplet methods
