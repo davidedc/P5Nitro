@@ -249,6 +249,7 @@ public static void main(String args[]) {
         catch (IOException e) {  
           e.printStackTrace();
         }
+        //System.exit(1);
 
         String outputFileName;
 
