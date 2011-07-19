@@ -26,7 +26,6 @@ Copyright (C) 2011 by all P5Nitro contributors
 // and for COMMENTEDOUTBECAUSEOFgetPixelAtERROR
 
 
-import processing.core.*;
 import javax.swing.JFileChooser;
 
 import java.applet.*;
@@ -38,10 +37,16 @@ import java.util.*;
 // this one is to make the window transparent, so you don't see anything
 // it would be better to not open the window at all,
 // but I couldn't manage.
-import com.sun.awt.AWTUtilities;
+// import com.sun.awt.AWTUtilities;
+// import processing.core.*;
 
 
 public class P5Nitro extends PApplet {
+  String compiledSketchesDirectoryRelativeToDataPath;
+  String compiledSketchesDirectory;
+  String templatesDirectory;
+  String compiledSketchFromEditorDirectory;
+
   String theCompleteProgram = "";
   static boolean openGL = true;
   static boolean flash = false;
@@ -84,6 +89,12 @@ public static void main(String args[]) {
      AWTUtilities.setWindowOpacity(frame, 0.0f);
      */
 
+    // now setup some shortcuts for some frequently used directories
+    compiledSketchesDirectoryRelativeToDataPath = "/../../CompiledSketches/";
+    compiledSketchesDirectory = dataPath("")+compiledSketchesDirectoryRelativeToDataPath;
+    templatesDirectory = dataPath("")+"/templates/";
+    compiledSketchFromEditorDirectory = compiledSketchesDirectory+"SketchFromP5NitroEditor/";
+
     outerBackgroundColor = color(255);
     // the last boolean is the P5Nitro mode
 
@@ -104,9 +115,9 @@ public static void main(String args[]) {
 
   public void doTheTranslation() {
 
-    Vector allTheDirectories = null;
+    Vector sketchesInSketchesDirectory = null;
     try {
-      allTheDirectories = new FileTraversal().nonRecursivelyListDirectoriesInside( new File(dataPath("")+"../../Sketches/"));
+      sketchesInSketchesDirectory = new FileTraversal().nonRecursivelyListDirectoriesInside( new File(dataPath("")+"../../Sketches/"));
     }
     catch (Exception e) {
     }
@@ -116,9 +127,11 @@ public static void main(String args[]) {
     println(sketchPath(""));
 
 
-    for (int i = 0; i < allTheDirectories.size(); i++) {
-      String[] allDirectoriesInPath = allTheDirectories.get(i).toString().split("\\/");
+    for (int i = 0; i < sketchesInSketchesDirectory.size(); i++) {
+      String[] allDirectoriesInPath = sketchesInSketchesDirectory.get(i).toString().split("\\/");
       String sketchName = allDirectoriesInPath[allDirectoriesInPath.length-1];
+      String compiledSketchDirectory = compiledSketchesDirectory+sketchName;
+      String compiledSketchXCodeDirectory = compiledSketchDirectory+"/XCodeProject" + sketchName;
 
       //if (!sketchName.equals("BubblesGAMEv26") && !sketchName.equals("Chain") && !sketchName.equals("CountDownAprilFoolsV1")) continue;
 
@@ -151,7 +164,7 @@ public static void main(String args[]) {
       println("Treating directory: " + sketchName );
 
       Translator.transformedProgram = "miao";
-      Translator.transformedProgram = SketchMerger.mergeSketchInDirectory(new File (allTheDirectories.get(i)+""), this);
+      Translator.transformedProgram = SketchMerger.mergeSketchInDirectory(new File (sketchesInSketchesDirectory.get(i)+""), this);
       if (Translator.transformedProgram != null) {
         Translator.sketchName = sketchName;
 
@@ -196,7 +209,7 @@ public static void main(String args[]) {
         Translator.addFrameCountVariable();
         //Translator.addMouseVariables();  
 
-        String PAppletMethodsTemplate = FileLoaderAndSaver.loadFile(new File(dataPath("")+"templates/PAppletMethods.template"), this);
+        String PAppletMethodsTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"PAppletMethods.template"), this);
         Translator.transformedProgram = Translator.transformedProgram.replaceAll(
         "public static function setupArgCount0\\(", 
         PAppletMethodsTemplate + "\npublic function setupArgCount0 ("
@@ -243,31 +256,28 @@ public static void main(String args[]) {
         Translator.findFrameSizeAndFrameRate();
 
         // remove all the stuff about this sketch in the compiled directory
-        try {
-          Process pm0 = Runtime.getRuntime().exec("rm -rdf "+sketchName+"/", null, new File(dataPath("")+"../../CompiledSketches/"));  
-        }
-        catch (IOException e) {  
-          e.printStackTrace();
-        }
+        runCommandInDirectory("rm -rdf "+sketchName+"/", new File(compiledSketchesDirectory));
         //System.exit(1);
 
         String outputFileName;
 
-        String MainHeaderTemplate = FileLoaderAndSaver.loadFile(new File(dataPath("")+"templates/MainHeader.template"), this);
+        String MainHeaderTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"MainHeader.template"), this);
         if (flash)
           MainHeaderTemplate = MainHeaderTemplate.replaceAll("/\\*ifFlash", "").replaceAll("endifFlash\\*/", "");
         else if (openGL)
           MainHeaderTemplate = MainHeaderTemplate.replaceAll("/\\*ifOpenGL", "").replaceAll("endifOpenGL\\*/", "");
         Translator.transformedProgram = Translator.transformedProgram.replaceAll("class\\s*Main\\s*extends\\s*Bitmap\\s*\\{", MainHeaderTemplate);
-        outputFileName = allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/translatedToHaxe/Main.hx"; 
+        outputFileName = compiledSketchDirectory+"/translatedToHaxe/Main.hx"; 
         FileLoaderAndSaver.saveFile( new File(outputFileName), Translator.transformedProgram, this);
+
+        // compiledSketchesDirectory
 
         // PGraphics spawns two versions of himself: the openGL accelerated version used for the main
         // application and the bitmap version used for the attached children
         // note that is the flash flag is set then they are both software-rendered bitmaps
 
-          String PGraphicsTemplate = FileLoaderAndSaver.loadFile(new File(dataPath("")+"templates/PGraphics.template"), this);
-        outputFileName = allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/translatedToHaxe/PGraphicsRoot.hx"; 
+          String PGraphicsTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"PGraphics.template"), this);
+        outputFileName = compiledSketchDirectory+"/translatedToHaxe/PGraphicsRoot.hx"; 
         if (flash)
           PGraphicsTemplate = PGraphicsTemplate.replaceAll("/\\*ifFlash", "").replaceAll("endifFlash\\*/", "");
         else if (openGL)
@@ -275,17 +285,17 @@ public static void main(String args[]) {
         PGraphicsTemplate = PGraphicsTemplate.replaceAll("class\\s*PGraphics\\s*extends", "class PGraphicsRoot extends");
         FileLoaderAndSaver.saveFile( new File(outputFileName), PGraphicsTemplate, this);
 
-        PGraphicsTemplate = FileLoaderAndSaver.loadFile(new File(dataPath("")+"templates/PGraphics.template"), this);
-        outputFileName = allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/translatedToHaxe/PGraphics.hx"; 
+        PGraphicsTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"PGraphics.template"), this);
+        outputFileName = compiledSketchDirectory+"/translatedToHaxe/PGraphics.hx"; 
         PGraphicsTemplate = PGraphicsTemplate.replaceAll("/\\*ifFlash", "").replaceAll("endifFlash\\*/", "");
         FileLoaderAndSaver.saveFile( new File(outputFileName), PGraphicsTemplate, this);
 
-        String PImageTemplate = FileLoaderAndSaver.loadFile(new File(dataPath("")+"templates/PImage.template"), this);
-        outputFileName = allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/translatedToHaxe/PImage.hx";
+        String PImageTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"PImage.template"), this);
+        outputFileName = compiledSketchDirectory+"/translatedToHaxe/PImage.hx";
         FileLoaderAndSaver.saveFile( new File(outputFileName), PImageTemplate, this);
 
-        String NMLProjectFileTemplate = FileLoaderAndSaver.loadFile(new File(dataPath("")+"templates/NmmlProjectFile.template"), this);
-        outputFileName = allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/translatedToHaxe/P5NitroSketch.nmml"; 
+        String NMLProjectFileTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"NmmlProjectFile.template"), this);
+        outputFileName = compiledSketchDirectory+"/translatedToHaxe/P5NitroSketch.nmml"; 
         NMLProjectFileTemplate = NMLProjectFileTemplate.replaceAll("SKETCHWIDTH", Translator.frameSizeXFromSource+"").replaceAll("SKETCHHEIGHT", Translator.frameSizeYFromSource+"").replaceAll("FRAMERATE", Translator.frameRateFromSource+"");
 
         FileLoaderAndSaver.saveFile( new File(outputFileName), NMLProjectFileTemplate, this);
@@ -293,55 +303,46 @@ public static void main(String args[]) {
 
       // delete the old XCode folder and copy over the latest
       // version from the template directory
-      String XCodeDirectoryName = allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/XCodeProject" + sketchName+"/";
-      File XCodeDirectory = new File(XCodeDirectoryName);
+      File XCodeDirectory = new File(compiledSketchXCodeDirectory+"/");
       if (XCodeDirectory.exists()) {
         println("XCode directory exists - deleting it");
         DirectoryDeleter.deleteDir(XCodeDirectory);
       }
       XCodeDirectory.mkdir();
       println("copying XCode directory template");
-      try {
-        DirectoryCopier.copyDirectory(new File(dataPath("")+"templates/HaxeProjectTemplate/"), XCodeDirectory );
-      }
-      catch (Exception e) {
-        println("exception: "+e);
-      }
+      DirectoryCopier.copyDirectory(new File(templatesDirectory+"HaxeProjectTemplate/"), XCodeDirectory );
 
       // now rename both the plist file and the xcodeproj file to match
       // the new project name
 
-        println("creating plist file");
-      File pListFile = new File(allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/XCodeProject" + sketchName+"/HaxeProjectTemplate-Info.plist");
-      File pListFileRenamed = new File(allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/XCodeProject" + sketchName+"/XCodeProject" + sketchName+"-Info.plist");
+      println("creating plist file");
+      File pListFile = new File(compiledSketchXCodeDirectory+"/HaxeProjectTemplate-Info.plist");
+      File pListFileRenamed = new File(compiledSketchXCodeDirectory+"/XCodeProject" + sketchName+"-Info.plist");
       pListFile.renameTo(pListFileRenamed);
 
       println("creating xcodeproj file");
-      File xCodeProjFile = new File(allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/XCodeProject" + sketchName+"/HaxeProjectTemplate.xcodeproj");
-      File xCodeProjFileRenamed = new File(allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/XCodeProject" + sketchName+"/XCodeProject" + sketchName+".xcodeproj");
+      File xCodeProjFile = new File(compiledSketchXCodeDirectory+"/HaxeProjectTemplate.xcodeproj");
+      File xCodeProjFileRenamed = new File(compiledSketchXCodeDirectory+"/XCodeProject" + sketchName+".xcodeproj");
       xCodeProjFile.renameTo(xCodeProjFileRenamed);
-      println("6");
 
       // now replace all the occurrences of the old project name inside the pbxproj file
       // with the new project name
-      File newXCodeProjFile = new File(allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/XCodeProject" + sketchName+"/XCodeProject" + sketchName+".xcodeproj/project.pbxproj");
+      File newXCodeProjFile = new File(compiledSketchXCodeDirectory+"/XCodeProject" + sketchName+".xcodeproj/project.pbxproj");
 
       String xCodeProjFileContents = FileLoaderAndSaver.loadFile(newXCodeProjFile, this);
       xCodeProjFileContents = xCodeProjFileContents.replaceAll("HaxeProjectTemplate", "XCodeProject" + sketchName);
       FileLoaderAndSaver.saveFile( newXCodeProjFile, xCodeProjFileContents, this);
-      println("5");
 
       // ok now let's find the sketch files (the ones in  the data directory)
       // we'll later also update the project.pbxproj file accordingly
       // note that we'll skip the .vlw files (which are for the fonts)
       Vector filesToInclude = null;
       try {
-        filesToInclude = (new FileTraversal()).nonRecursivelyListFilesInside( new File(allTheDirectories.get(i) + "/data/") );
+        filesToInclude = (new FileTraversal()).nonRecursivelyListFilesInside( new File(sketchesInSketchesDirectory.get(i) + "/data/") );
       }
       catch (Exception e) {
         println("exception: "+e);
       }
-      println("51 " + filesToInclude);
 
       int numberOfFiles = 0;
       if (filesToInclude != null) {
@@ -352,7 +353,6 @@ public static void main(String args[]) {
       Vector selectedFilesToIncludeNameWithExtension = new Vector();
       Vector selectedFilesToIncludeExtension = new Vector();
       for (int k = 0; k < numberOfFiles; k++) {
-        println("52");
         String fileName = ((String)filesToInclude.get(k));
         String fname="";
         String ext="";
@@ -367,18 +367,16 @@ public static void main(String args[]) {
           selectedFilesToIncludeExtension.add(ext);
         }
       }
-      println("4");
 
       // copy all the selected files into the xcode folder
       for (int k = 0; k < selectedFilesToIncludePath.size(); k++) {
         try {
-          FileLoaderAndSaver.copy(selectedFilesToIncludePath.get(k) + "", allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/XCodeProject" + sketchName+"/" + selectedFilesToIncludeNameWithExtension.get(k) );
+          FileLoaderAndSaver.copy(selectedFilesToIncludePath.get(k) + "", compiledSketchXCodeDirectory+"/" + selectedFilesToIncludeNameWithExtension.get(k) );
         }
         catch (Exception e) {
           println("exception: "+e);
         }
       }
-      println("3");
 
       Vector selectedFilesToIncludeHex1 = new Vector();
       Vector selectedFilesToIncludeHex2 = new Vector();
@@ -392,8 +390,6 @@ public static void main(String args[]) {
       String Change3 = "" ;
       String Change4 = "" ;
       String fileEncoding = "" ;
-
-      println("2");
 
       for (int k = 0; k < selectedFilesToIncludePath.size(); k++) {
 
@@ -434,7 +430,6 @@ public static void main(String args[]) {
           selectedFilesToIncludeNameWithExtension.get(k) +
           " in Resources */,";
       }
-      println("1");
 
       // ok now put the strings in place
       xCodeProjFileContents = FileLoaderAndSaver.loadFile(newXCodeProjFile, this);
@@ -444,47 +439,22 @@ public static void main(String args[]) {
       xCodeProjFileContents = xCodeProjFileContents.replaceAll("\\)\\;[\\n\\s\\t]*runOnlyForDeploymentPostprocessing\\s\\=\\s0\\;[\\n\\s\\t]*\\}\\;[\\n\\s\\t]*/\\*\\sEnd\\sPBXResourcesBuildPhase\\ssection\\s\\*/", Change4 + ");\n\t\t\trunOnlyForDeploymentPostprocessing = 0;\n\t\t\t};\n/* End PBXResourcesBuildPhase section */");
       FileLoaderAndSaver.saveFile( newXCodeProjFile, xCodeProjFileContents, this);
 
-
       // now copy all the generated hx files into the haxe/src directory
       // of the xcode folder
 
       println("putting the translated haxe files into the xcode src directory");
-      try {
-        DirectoryCopier.copyDirectory(new File(allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/translatedToHaxe"), new File(allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/XCodeProject" + sketchName+"/haxe/src/") );
-      }
-      catch (Exception e) {
-        println("exception: "+e);
-      }
+      DirectoryCopier.copyDirectory(new File(compiledSketchDirectory+"/translatedToHaxe"), new File(compiledSketchXCodeDirectory+"/haxe/src/") );
 
       // now copy all additional haxe files
       // into the xcode folder              
       // these are generic files like 
       println("copy all the additional haxe files in the xcode folder");
-      try {
-        DirectoryCopier.copyDirectory( new File(dataPath("")+"templates/additionalHaxeFilesToBeCopiedToProject/"), new File(allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/XCodeProject" + sketchName+"/haxe/src/") );
-      }
-      catch (Exception e) {
-        println("exception 1: "+e);
-      }
+      DirectoryCopier.copyDirectory( new File(templatesDirectory+"additionalHaxeFilesToBeCopiedToProject/"), new File(compiledSketchXCodeDirectory+"/haxe/src/") );
 
       // now copy all additional haxe files that are sketch-specific
       // into the xcode folder              
-      try {
-        DirectoryCopier.copyDirectory(new File(allTheDirectories.get(i)+"/data/additionalHaxeFilesToBeCopiedToProject"), new File(allTheDirectories.get(i)+"/../../CompiledSketches/"+sketchName+"/XCodeProject" + sketchName+"/haxe/src/") );
-      }
-      catch (Exception e) {
-        println("exception 2: "+e);
-      }
+      DirectoryCopier.copyDirectory(new File(sketchesInSketchesDirectory.get(i)+"/data/additionalHaxeFilesToBeCopiedToProject"), new File(compiledSketchXCodeDirectory+"/haxe/src/") );
     }
-    /*
-    // run diff script
-     try{
-     Runtime.getRuntime().exec("/Users/davidedellacasa/Desktop/inputFilesForTranslatorFolder/showMeTheDifferences.sh");
-     }
-     catch(java.io.IOException e){
-     println(e);
-     }
-     */
 
     /*
     String mergedSketch = SketchMerger.mergeSketchInDirectory(
@@ -521,51 +491,25 @@ public static void main(String args[]) {
 
         //System.out.println(dataPath(""));
         //System.out.println(runCommand("pwd"));
-        //System.out.println(runCommand("rm -R ../../P5Nitro/data/inputFilesForTranslatorFolder/SketchFromP5NitroEditor"));
-        //System.out.println(runCommand("mkdir ../../P5Nitro/data/inputFilesForTranslatorFolder/SketchFromP5NitroEditor"));
         File savingAs = new File(dataPath("")+"../../Sketches/"+"SketchFromP5NitroEditor/sketch.pde");
         FileLoaderAndSaver.saveFile(savingAs, c.allText, this);
 
-        //System.out.println(runCommand("./P5Nitro"));
         doTheTranslation();
 
-        //System.out.println(runCommand("haxelib run nme"));
+        println("creating bin directory");
+        runCommandInDirectory("mkdir bin", new File(compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/"));
 
-        try {
+        println("copying the cached bin directory");
+        runCommandInDirectory("cp -RLp " + dataPath("") + "/cachedBin/ ./bin/", new File(compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/"));
 
-          println("creating bin directory");
-          Process pm0 = Runtime.getRuntime().exec("mkdir bin", null, new File(dataPath("")+"../../CompiledSketches/"+"SketchFromP5NitroEditor/XCodeProjectSketchFromP5NitroEditor/haxe/src/"));  
-          println("copying the cached bin directory");
-          Process pm1 = Runtime.getRuntime().exec("cp -RLp " + dataPath("") + "/cachedBin/ ./bin/", null, new File(dataPath("")+"../../CompiledSketches/"+"SketchFromP5NitroEditor/XCodeProjectSketchFromP5NitroEditor/haxe/src/"));  
-          //Process pm15 = Runtime.getRuntime().exec("mv cachedBin bin", null, new File(dataPath("")+"data/inputFilesForTranslatorFolder/SketchFromP5NitroEditor/data/XCodeProjectSketchFromP5NitroEditor/haxe/src/"));  
+        println("chmodding the build binaries script");
+        runCommandInDirectory("chmod 777 buildTheBinaries.sh", new File(compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/"));
 
-          println("chmodding the build binaries script");
-          Process p0 = Runtime.getRuntime().exec("chmod 777 buildTheBinaries.sh", null, new File(dataPath("")+"../../CompiledSketches/"+"SketchFromP5NitroEditor/XCodeProjectSketchFromP5NitroEditor/haxe/src/"));  
-          println("launching the binary generator  " + new File(dataPath("")+"../../CompiledSketches/"+"SketchFromP5NitroEditor/XCodeProjectSketchFromP5NitroEditor/haxe/src/"));  
-          //String[] cmd = {"haxelib","run","nme build P5NitroSketch.nmml cpp"};
-          //String[] cmd = {"sh", "-c", "haxelib run nme build P5NitroSketch.nmml cpp"};
-          String[] cmd = {
-            "sh", "buildTheBinaries.sh"
-          };
-          String[] env = {
-            "DYLD_LIBRARY_PATH=:/usr/lib/haxe/lib/hxcpp/2,07,0/bin/Mac:/usr/lib/haxe/lib/nme/2,0,1/ndll/Mac:.", "NEKO_INSTALL_PATH=/usr/lib/neko", "PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/usr/X11/bin"
-          };
-          Process p = Runtime.getRuntime().exec("./buildTheBinaries.sh", env, new File(dataPath("")+"../../CompiledSketches/"+"SketchFromP5NitroEditor/XCodeProjectSketchFromP5NitroEditor/haxe/src/"));  
-          BufferedReader in = new BufferedReader(  
-          new InputStreamReader(p.getInputStream()));  
-          String line = null;  
-          while ( (line = in.readLine ()) != null) {  
-            System.out.println(line);  
-            //theReturnedString = theReturnedString + "\n" + line;
-          } 
+        println("launching the binary generator" );  
+        runCommandInDirectory("./buildTheBinaries.sh", new File(compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/"));
 
-          print("opening the app");
-          Process p1 = Runtime.getRuntime().exec("open P5NitroSketch.app", null, new File(dataPath("")+"../../CompiledSketches/"+"SketchFromP5NitroEditor/XCodeProjectSketchFromP5NitroEditor/haxe/src/bin/cpp/Mac"));
-        }
-        catch (IOException e) {  
-          e.printStackTrace();
-        }
-
+        print("opening the app");
+        runCommandInDirectory("open P5NitroSketch.app", new File(compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/bin/cpp/Mac"));
 
         return;
       }
@@ -578,12 +522,12 @@ public static void main(String args[]) {
     c.mousePressed(mouseX, mouseY);
   }
 
-  public String runCommand(String theCommand) {
+  public String runCommandInDirectory(String theCommand, File theDirectory) {
 
     String theReturnedString = "";  
 
     try {  
-      Process p = Runtime.getRuntime().exec(theCommand, null, new File(dataPath("")));  
+      Process p = Runtime.getRuntime().exec(theCommand, null, theDirectory);  
 
       BufferedReader in = new BufferedReader(  
       new InputStreamReader(p.getInputStream()));  
@@ -597,7 +541,11 @@ public static void main(String args[]) {
       e.printStackTrace();
     }
     return theReturnedString;
-    //return "ok";
+  }
+
+
+  public String runCommand(String theCommand) {
+    return runCommandInDirectory( theCommand, new File(dataPath("")));
   }
 }
 
