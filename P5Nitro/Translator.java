@@ -28,6 +28,7 @@ import java.io.*;
 
 class Translator {
   public static String transformedProgram;
+  public static String PAppletMethodsTemplate;
   public static String classesPattern = "";
   static String anyNumberOfArrayBrackets = "(\\[\\s*\\w*\\s*\\])*";
   static String atLeastOneArrayBracket   = "(\\[\\s*\\w*\\s*\\])+";
@@ -54,7 +55,97 @@ class Translator {
   static int frameSizeYFromSource = 100;
   static int frameRateFromSource = 60;
 
+  public static void transformProgram() {
+        Translator.sketchName = sketchName;
 
+        Translator.transformJavaAwtRectangleIntoRectangle();
+
+        Translator.checkIfMinimSoundLibraryIsReferenced();
+        Translator.eliminateMinimPackageInclusionIfThereIsOne();
+        Translator.simplifyMinimConstructor();
+        Translator.simplifyMinimPanGainVolumeCalls();
+        Translator.removeSuperDotStop();
+
+        Translator.checkIfProcessingNetLibraryIsReferenced();          
+        Translator.simplifyClientConstructor();
+        Translator.eliminateProcessingNetPackageInclusionIfThereIsOne();
+
+        Translator.replaceSlasQuotesAndSlashCharsWithToken();
+        Translator.findNamesOfUserDefinedClasses();
+        Translator.fixSpacesAroundSquareBrackets();
+        Translator.fixContructors();
+        Translator.trnsfrmForLoopWithExplicitIncrement();
+        Translator.trnsfrmForLoopWithPlusPlusIncrement();
+        Translator.trnsfrmMultipleDeclarationsInOneLine();
+        Translator.trnsfrmArrayDeclBringBracketsOnTypeSide();
+        Translator.trnsfrmArrayDeclNoInitBrcktsOnTypeSide();
+
+        Translator.trnsfrmArrayDecWithCreationOfObj();
+        Translator.trnsfrmTopLevelArrayDecWithCreationOfObj();
+        Translator.checkIfThereAreArrayInitialisations();
+        Translator.checkUnsupportedTypes();
+        Translator.removeVarInsideMethodDeclarations();
+        Translator.adjustMethodDeclaration();
+        Translator.trnsfrmBasicTypeDeclarationsWithSimpleInits();
+        Translator.makeAllInstanceVariablePublic();
+        Translator.checkThereAreNoInitialisationsInInstanceVariables();      
+        Translator.addParametersCountToFunctionNames();
+
+        Translator.transformRemainingArrayInitsWithoutVariableDeclaration();
+
+        Translator.wrapTopLevelDeclarationsInStaticClass();
+        //Translator.terminateClassesWithSpecialCharacters();
+        Translator.addIntFunction();
+        Translator.addFrameCountVariable();
+        //Translator.addMouseVariables();  
+
+        Translator.transformedProgram = Translator.transformedProgram.replaceAll(
+        "public static function setupArgCount0\\(", 
+        PAppletMethodsTemplate + "\npublic function setupArgCount0 ("
+          );
+        Translator.adjustReferencesToMainClassVariablesAndFunctions();
+        //if(sketchName.equals("QuickTrialSketch")) { noLoop(); return; }
+        Translator.cleanupArgCountForConstructors();
+        //Translator.addMainAndNewMethodsToMainClass();
+        Translator.addHeaderToSketchClass();
+        //Translator.addPackageImports();
+        //Translator.substituteIntAndPrintlnReferenceToProperFunctions();
+        Translator.removeEmptyPrintlnAndIntDefinition();
+        Translator.removeFrameCountVariable();
+        //Translator.removeMouseVariables();
+        //Translator.fixReferencesToDrawFunctionSoThatEventIsPassed(); // found a better way
+        Translator.putAllTopLevelInitialisationsInConstructor();
+        //Translator.addPushAndPopMatricAtTopAndBottomOfDrawMethod(); // found a better way
+        Translator.cleanupClassSeparators();
+        Translator.enableTheMouseEventCallsThatNeedBe(); 
+        // these deal with converting ArrayLists to Haxe arrays
+        Translator.collectArrayListVariables();
+
+        Translator.replaceArrayListMethods();
+        Translator.fixCastings();
+        Translator.putTypeInArrayDeclarationsIfThereIsAHint();
+        Translator.replaceArrayListTypeWithArrayInDeclarations();
+        Translator.replaceArrayListConstructorsWithArrayConstructors();
+        Translator.addEmptyStringToPrintsSoIntegersCanBePrinted();
+        Translator.fixArrayInitialisationInCaseOfloadString();
+
+        Translator.removingTouchInterfaceSimulator();
+        Translator.removingArgCountFromCharAtFunction();
+        Translator.removingArgCountFromReturnFunction();
+        Translator.removingArgCountFromLengthFunction();
+        Translator.translatingParseFloatReferences();
+        Translator.translatingParseIntReferences();
+        Translator.removingArgCountFromIndexOfFunction();
+        Translator.removingArgCountFromSubstringFunction();
+        Translator.translatingDotEquals();
+        Translator.makeSetupFunctionStatic();
+        Translator.replaceArrayArgCount0LeftByTopLevelArrayDeclWithInit();
+        Translator.SystemOutPrintlnArgCount1WithTrace();
+        Translator.replaceSlasQuotesAndSlashCharsFromToken();
+        Translator.findFrameSizeAndFrameRate();
+
+  }
+  
   public static void findFrameSizeAndFrameRate() {
     String patternForFindingTheFrameSize;
 

@@ -34,40 +34,60 @@ import java.awt.image.*;
 import java.awt.event.*;
 import java.util.*;
 
-// this one is to make the window transparent, so you don't see anything
+// this import is to make the window transparent, so you don't see anything
 // it would be better to not open the window at all,
 // but I couldn't manage.
 // import com.sun.awt.AWTUtilities;
-// import processing.core.*;
 
 
 public class P5Nitro extends PApplet {
+  // These are shortcuts for building a number of paths later on.
+  // Ideally I'd like to initialise these string here but I can't,
+  // because datapath("") doesn't return the right value (i.e the
+  // path of the data directory of the sketch) if placed here, for
+  // some reason
   String compiledSketchesDirectoryRelativeToDataPath;
   String compiledSketchesDirectory;
   String templatesDirectory;
   String compiledSketchFromEditorDirectory;
 
-  String theCompleteProgram = "";
+  // These two booleans toggle between two modes: the flash
+  // mode and the opengl mode. In the flash mode, we render the
+  // whole frame to a bitmap, in each frame. The problem with that
+  // is in that mobile devices the bus between cpu and gpu is very
+  // small - so the bitmap is generated on the cpu and slowly sent
+  // to the gpu. That's slow.
+  // The opengl mode instead sends the opengl primitives rather than
+  // the sw-generated bitmap. So it is faster, but there are some
+  // troubles in that openGL doesn't normally retain the content
+  // of a frame to the next - which is needed in processing. So
+  // the opengl mode needs a change to the nme api to retain a frame
+  // to the next.
   static boolean openGL = true;
   static boolean flash = false;
 
   // these are from the old TextAreaApp
   static color outerBackgroundColor;
-  static TextArea c;
-  static int canvasSizeX;
-  static int canvasSizeY;
-  static boolean control = false;
-  static boolean P5NitroMode = true;
   static int myColorBackground;
+  static TextArea theTextArea;
+  static boolean control = false;
+  // P5NitroMode is when the fancy editor that resembles processing
+  // comes out.
+  static boolean P5NitroMode = true;
 
+
+  // This main method needs to be added when you use the "export as app"
+  // functionality of Processing in OSX. If you don't, then the generated
+  // OSX application doesn't start, it throws an error upon launch saying
+  // that main is not found
   /*
-public static void main(String args[]) {
+   public static void main(String args[]) {
    PApplet.main(new String[] {  "P5Nitro" });
    }
    */
 
-  // this is to make the window transparent so there is no
-  // disruption
+  // this is to make the window transparent so that the user is not confused
+  // by an empty window that does nothing.
   /*
   public void init() {
    frame.removeNotify();
@@ -100,36 +120,39 @@ public static void main(String args[]) {
 
     if (P5NitroMode) {
       size(500, 535);
-      c = new TextArea(this, 10, 133, 470, 340, color(240, 240, 240), color(20, 20, 20), 15, false, true);
+      theTextArea = new TextArea(this, 10, 133, 470, 340, color(240, 240, 240), color(20, 20, 20), 15, false, true);
     }
     else {
       size(1000, 400);
-      c = new TextArea(this, 0, 30, 300, 300, color(240, 240, 240), color(20, 20, 20), 15, false, false);
+      theTextArea = new TextArea(this, 0, 30, 300, 300, color(240, 240, 240), color(20, 20, 20), 15, false, false);
     }
   }
 
   void draw() {
     background(outerBackgroundColor);
-    c.draw(this);
+    // Currently the whole of the text area is repainted each frame,
+    // which is quite wasteful, we'll have to optimize this later on
+    theTextArea.draw(this);
   }
 
   public void doTheTranslation() {
 
     Vector sketchesInSketchesDirectory = null;
-    try {
-      sketchesInSketchesDirectory = new FileTraversal().nonRecursivelyListDirectoriesInside( new File(dataPath("")+"../../Sketches/"));
-    }
-    catch (Exception e) {
-    }
+    sketchesInSketchesDirectory = new FileTraversal().nonRecursivelyListDirectoriesInside( new File(dataPath("")+"../../Sketches/"));
 
-    println(System.getProperty("user.dir"));
-    println(dataPath(""));
-    println(sketchPath(""));
+    println("System.getProperty(\"user.dir\"): "+System.getProperty("user.dir"));
+    println("dataPath(\"\"): "+dataPath(""));
+    println("sketchPath(\"\"): "+sketchPath(""));
 
 
     for (int i = 0; i < sketchesInSketchesDirectory.size(); i++) {
+
+      // we figure out the name of the sketch, it's the name of the deepest
+      // directory in the path, so we get it with a little string
+      // manipulation.
       String[] allDirectoriesInPath = sketchesInSketchesDirectory.get(i).toString().split("\\/");
       String sketchName = allDirectoriesInPath[allDirectoriesInPath.length-1];
+
       String compiledSketchDirectory = compiledSketchesDirectory+sketchName;
       String compiledSketchXCodeDirectory = compiledSketchDirectory+"/XCodeProject" + sketchName;
 
@@ -163,97 +186,13 @@ public static void main(String args[]) {
 
       println("Treating directory: " + sketchName );
 
-      Translator.transformedProgram = "miao";
+      //Translator.transformedProgram;
       Translator.transformedProgram = SketchMerger.mergeSketchInDirectory(new File (sketchesInSketchesDirectory.get(i)+""), this);
       if (Translator.transformedProgram != null) {
-        Translator.sketchName = sketchName;
+        Translator.PAppletMethodsTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"PAppletMethods.template"), this);
 
-        Translator.transformJavaAwtRectangleIntoRectangle();
+        Translator.transformProgram();
 
-        Translator.checkIfMinimSoundLibraryIsReferenced();
-        Translator.eliminateMinimPackageInclusionIfThereIsOne();
-        Translator.simplifyMinimConstructor();
-        Translator.simplifyMinimPanGainVolumeCalls();
-        Translator.removeSuperDotStop();
-
-        Translator.checkIfProcessingNetLibraryIsReferenced();          
-        Translator.simplifyClientConstructor();
-        Translator.eliminateProcessingNetPackageInclusionIfThereIsOne();
-
-        Translator.replaceSlasQuotesAndSlashCharsWithToken();
-        Translator.findNamesOfUserDefinedClasses();
-        Translator.fixSpacesAroundSquareBrackets();
-        Translator.fixContructors();
-        Translator.trnsfrmForLoopWithExplicitIncrement();
-        Translator.trnsfrmForLoopWithPlusPlusIncrement();
-        Translator.trnsfrmMultipleDeclarationsInOneLine();
-        Translator.trnsfrmArrayDeclBringBracketsOnTypeSide();
-        Translator.trnsfrmArrayDeclNoInitBrcktsOnTypeSide();
-
-        Translator.trnsfrmArrayDecWithCreationOfObj();
-        Translator.trnsfrmTopLevelArrayDecWithCreationOfObj();
-        Translator.checkIfThereAreArrayInitialisations();
-        Translator.checkUnsupportedTypes();
-        Translator.removeVarInsideMethodDeclarations();
-        Translator.adjustMethodDeclaration();
-        Translator.trnsfrmBasicTypeDeclarationsWithSimpleInits();
-        Translator.makeAllInstanceVariablePublic();
-        Translator.checkThereAreNoInitialisationsInInstanceVariables();      
-        Translator.addParametersCountToFunctionNames();
-
-        Translator.transformRemainingArrayInitsWithoutVariableDeclaration();
-
-        Translator.wrapTopLevelDeclarationsInStaticClass();
-        //Translator.terminateClassesWithSpecialCharacters();
-        Translator.addIntFunction();
-        Translator.addFrameCountVariable();
-        //Translator.addMouseVariables();  
-
-        String PAppletMethodsTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"PAppletMethods.template"), this);
-        Translator.transformedProgram = Translator.transformedProgram.replaceAll(
-        "public static function setupArgCount0\\(", 
-        PAppletMethodsTemplate + "\npublic function setupArgCount0 ("
-          );
-        Translator.adjustReferencesToMainClassVariablesAndFunctions();
-        //if(sketchName.equals("QuickTrialSketch")) { noLoop(); return; }
-        Translator.cleanupArgCountForConstructors();
-        //Translator.addMainAndNewMethodsToMainClass();
-        Translator.addHeaderToSketchClass();
-        //Translator.addPackageImports();
-        //Translator.substituteIntAndPrintlnReferenceToProperFunctions();
-        Translator.removeEmptyPrintlnAndIntDefinition();
-        Translator.removeFrameCountVariable();
-        //Translator.removeMouseVariables();
-        //Translator.fixReferencesToDrawFunctionSoThatEventIsPassed(); // found a better way
-        Translator.putAllTopLevelInitialisationsInConstructor();
-        //Translator.addPushAndPopMatricAtTopAndBottomOfDrawMethod(); // found a better way
-        Translator.cleanupClassSeparators();
-        Translator.enableTheMouseEventCallsThatNeedBe(); 
-        // these deal with converting ArrayLists to Haxe arrays
-        Translator.collectArrayListVariables();
-
-        Translator.replaceArrayListMethods();
-        Translator.fixCastings();
-        Translator.putTypeInArrayDeclarationsIfThereIsAHint();
-        Translator.replaceArrayListTypeWithArrayInDeclarations();
-        Translator.replaceArrayListConstructorsWithArrayConstructors();
-        Translator.addEmptyStringToPrintsSoIntegersCanBePrinted();
-        Translator.fixArrayInitialisationInCaseOfloadString();
-
-        Translator.removingTouchInterfaceSimulator();
-        Translator.removingArgCountFromCharAtFunction();
-        Translator.removingArgCountFromReturnFunction();
-        Translator.removingArgCountFromLengthFunction();
-        Translator.translatingParseFloatReferences();
-        Translator.translatingParseIntReferences();
-        Translator.removingArgCountFromIndexOfFunction();
-        Translator.removingArgCountFromSubstringFunction();
-        Translator.translatingDotEquals();
-        Translator.makeSetupFunctionStatic();
-        Translator.replaceArrayArgCount0LeftByTopLevelArrayDeclWithInit();
-        Translator.SystemOutPrintlnArgCount1WithTrace();
-        Translator.replaceSlasQuotesAndSlashCharsFromToken();
-        Translator.findFrameSizeAndFrameRate();
 
         // remove all the stuff about this sketch in the compiled directory
         runCommandInDirectory("rm -rdf "+sketchName+"/", new File(compiledSketchesDirectory));
@@ -270,11 +209,9 @@ public static void main(String args[]) {
         outputFileName = compiledSketchDirectory+"/translatedToHaxe/Main.hx"; 
         FileLoaderAndSaver.saveFile( new File(outputFileName), Translator.transformedProgram, this);
 
-        // compiledSketchesDirectory
-
-        // PGraphics spawns two versions of himself: the openGL accelerated version used for the main
+        // PGraphics spawns two versions of itself: the openGL accelerated version used for the main
         // application and the bitmap version used for the attached children
-        // note that is the flash flag is set then they are both software-rendered bitmaps
+        // note that if the flash flag is set then they are both software-rendered bitmaps
 
           String PGraphicsTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"PGraphics.template"), this);
         outputFileName = compiledSketchDirectory+"/translatedToHaxe/PGraphicsRoot.hx"; 
@@ -300,162 +237,8 @@ public static void main(String args[]) {
 
         FileLoaderAndSaver.saveFile( new File(outputFileName), NMLProjectFileTemplate, this);
       }
-
-      // delete the old XCode folder and copy over the latest
-      // version from the template directory
-      File XCodeDirectory = new File(compiledSketchXCodeDirectory+"/");
-      if (XCodeDirectory.exists()) {
-        println("XCode directory exists - deleting it");
-        DirectoryDeleter.deleteDir(XCodeDirectory);
-      }
-      XCodeDirectory.mkdir();
-      println("copying XCode directory template");
-      DirectoryCopier.copyDirectory(new File(templatesDirectory+"HaxeProjectTemplate/"), XCodeDirectory );
-
-      // now rename both the plist file and the xcodeproj file to match
-      // the new project name
-
-      println("creating plist file");
-      File pListFile = new File(compiledSketchXCodeDirectory+"/HaxeProjectTemplate-Info.plist");
-      File pListFileRenamed = new File(compiledSketchXCodeDirectory+"/XCodeProject" + sketchName+"-Info.plist");
-      pListFile.renameTo(pListFileRenamed);
-
-      println("creating xcodeproj file");
-      File xCodeProjFile = new File(compiledSketchXCodeDirectory+"/HaxeProjectTemplate.xcodeproj");
-      File xCodeProjFileRenamed = new File(compiledSketchXCodeDirectory+"/XCodeProject" + sketchName+".xcodeproj");
-      xCodeProjFile.renameTo(xCodeProjFileRenamed);
-
-      // now replace all the occurrences of the old project name inside the pbxproj file
-      // with the new project name
-      File newXCodeProjFile = new File(compiledSketchXCodeDirectory+"/XCodeProject" + sketchName+".xcodeproj/project.pbxproj");
-
-      String xCodeProjFileContents = FileLoaderAndSaver.loadFile(newXCodeProjFile, this);
-      xCodeProjFileContents = xCodeProjFileContents.replaceAll("HaxeProjectTemplate", "XCodeProject" + sketchName);
-      FileLoaderAndSaver.saveFile( newXCodeProjFile, xCodeProjFileContents, this);
-
-      // ok now let's find the sketch files (the ones in  the data directory)
-      // we'll later also update the project.pbxproj file accordingly
-      // note that we'll skip the .vlw files (which are for the fonts)
-      Vector filesToInclude = null;
-      try {
-        filesToInclude = (new FileTraversal()).nonRecursivelyListFilesInside( new File(sketchesInSketchesDirectory.get(i) + "/data/") );
-      }
-      catch (Exception e) {
-        println("exception: "+e);
-      }
-
-      int numberOfFiles = 0;
-      if (filesToInclude != null) {
-        numberOfFiles = filesToInclude.size();
-      }
-
-      Vector selectedFilesToIncludePath = new Vector();
-      Vector selectedFilesToIncludeNameWithExtension = new Vector();
-      Vector selectedFilesToIncludeExtension = new Vector();
-      for (int k = 0; k < numberOfFiles; k++) {
-        String fileName = ((String)filesToInclude.get(k));
-        String fname="";
-        String ext="";
-        int mid0= fileName.lastIndexOf("/") + 1;
-        int mid= fileName.lastIndexOf(".");
-        fname=fileName.substring(mid0, mid);
-        ext=fileName.substring(mid+1, fileName.length());
-        println("file to include: >" + fname + "< , extension: >" + ext + "<");
-        if ( (!fname.equals("")) && (!ext.equals("vlw"))) {
-          selectedFilesToIncludePath.add(fileName);
-          selectedFilesToIncludeNameWithExtension.add(fname + "." + ext);
-          selectedFilesToIncludeExtension.add(ext);
-        }
-      }
-
-      // copy all the selected files into the xcode folder
-      for (int k = 0; k < selectedFilesToIncludePath.size(); k++) {
-        try {
-          FileLoaderAndSaver.copy(selectedFilesToIncludePath.get(k) + "", compiledSketchXCodeDirectory+"/" + selectedFilesToIncludeNameWithExtension.get(k) );
-        }
-        catch (Exception e) {
-          println("exception: "+e);
-        }
-      }
-
-      Vector selectedFilesToIncludeHex1 = new Vector();
-      Vector selectedFilesToIncludeHex2 = new Vector();
-      for (int k = 0; k < selectedFilesToIncludePath.size(); k++) {
-        selectedFilesToIncludeHex1.add("1"+k);
-        selectedFilesToIncludeHex2.add("2"+k);
-      }
-
-      String Change1 = "" ;
-      String Change2 = "" ;
-      String Change3 = "" ;
-      String Change4 = "" ;
-      String fileEncoding = "" ;
-
-      for (int k = 0; k < selectedFilesToIncludePath.size(); k++) {
-
-        if (selectedFilesToIncludeExtension.get(k).equals("ehsvg")) {
-          fileEncoding = "fileEncoding = 4; ";
-        }
-        else if (selectedFilesToIncludeExtension.get(k).equals("txt")) {
-          fileEncoding = "fileEncoding = 4; ";
-        }
-
-        Change1 = Change1 +
-          "		" + selectedFilesToIncludeHex1.get(k) + " /* " +
-          selectedFilesToIncludeNameWithExtension.get(k) +
-          " in Resources */ = {isa = PBXBuildFile; "+
-          "fileRef = " +
-          selectedFilesToIncludeHex2.get(k) +
-          " /* " +
-          selectedFilesToIncludeNameWithExtension.get(k) +
-          " */; };\n";
-
-        Change2 = Change2 + "		" +
-          selectedFilesToIncludeHex2.get(k) +
-          " /* " +
-          selectedFilesToIncludeNameWithExtension.get(k) +
-          " */ = {isa = PBXFileReference; "+
-          fileEncoding +
-          "lastKnownFileType = dummy; path = "+
-          selectedFilesToIncludeNameWithExtension.get(k) +
-          "; sourceTree = \"<group>\"; };\n";
-        Change3 = Change3 + "\n				" +
-          selectedFilesToIncludeHex2.get(k) +
-          " /* " +
-          selectedFilesToIncludeNameWithExtension.get(k) +
-          " */,";
-        Change4 = Change4 + "\n				" +
-          selectedFilesToIncludeHex1.get(k) +
-          " /* " +
-          selectedFilesToIncludeNameWithExtension.get(k) +
-          " in Resources */,";
-      }
-
-      // ok now put the strings in place
-      xCodeProjFileContents = FileLoaderAndSaver.loadFile(newXCodeProjFile, this);
-      xCodeProjFileContents = xCodeProjFileContents.replaceAll("/\\*\\sEnd\\sPBXBuildFile\\ssection\\s\\*/", Change1 + "/* End PBXBuildFile section */");
-      xCodeProjFileContents = xCodeProjFileContents.replaceAll("/\\*\\sEnd\\sPBXFileReference\\ssection\\s\\*/", Change2 + "/* End PBXFileReference section */");
-      xCodeProjFileContents = xCodeProjFileContents.replaceAll("/\\*\\sCustomTemplate\\s\\*/\\s\\=\\s\\{[\\n\\s\\t]*isa\\s\\=\\sPBXGroup\\;[\\n\\s\\t]*children\\s\\=\\s\\(", "/* CustomTemplate */ = {\n\t\t\tisa = PBXGroup;\n\t\t\tchildren = (" + Change3);
-      xCodeProjFileContents = xCodeProjFileContents.replaceAll("\\)\\;[\\n\\s\\t]*runOnlyForDeploymentPostprocessing\\s\\=\\s0\\;[\\n\\s\\t]*\\}\\;[\\n\\s\\t]*/\\*\\sEnd\\sPBXResourcesBuildPhase\\ssection\\s\\*/", Change4 + ");\n\t\t\trunOnlyForDeploymentPostprocessing = 0;\n\t\t\t};\n/* End PBXResourcesBuildPhase section */");
-      FileLoaderAndSaver.saveFile( newXCodeProjFile, xCodeProjFileContents, this);
-
-      // now copy all the generated hx files into the haxe/src directory
-      // of the xcode folder
-
-      println("putting the translated haxe files into the xcode src directory");
-      DirectoryCopier.copyDirectory(new File(compiledSketchDirectory+"/translatedToHaxe"), new File(compiledSketchXCodeDirectory+"/haxe/src/") );
-
-      // now copy all additional haxe files
-      // into the xcode folder              
-      // these are generic files like 
-      println("copy all the additional haxe files in the xcode folder");
-      DirectoryCopier.copyDirectory( new File(templatesDirectory+"additionalHaxeFilesToBeCopiedToProject/"), new File(compiledSketchXCodeDirectory+"/haxe/src/") );
-
-      // now copy all additional haxe files that are sketch-specific
-      // into the xcode folder              
-      DirectoryCopier.copyDirectory(new File(sketchesInSketchesDirectory.get(i)+"/data/additionalHaxeFilesToBeCopiedToProject"), new File(compiledSketchXCodeDirectory+"/haxe/src/") );
+      XCodeProjectMaker.maxeXCodeProject( sketchName, templatesDirectory, compiledSketchXCodeDirectory, compiledSketchDirectory, this, sketchesInSketchesDirectory.get(i)+"");
     }
-
     /*
     String mergedSketch = SketchMerger.mergeSketchInDirectory(
      new File("/Users/davidedellacasa/Desktop/inputFilesForTranslatorFolder/") ,
@@ -474,7 +257,7 @@ public static void main(String args[]) {
         return;
       }
     } 
-    c.keyPressed(key, keyCode, control);
+    theTextArea.keyPressed(key, keyCode, control);
   }
 
   void keyReleased() {
@@ -492,7 +275,7 @@ public static void main(String args[]) {
         //System.out.println(dataPath(""));
         //System.out.println(runCommand("pwd"));
         File savingAs = new File(dataPath("")+"../../Sketches/"+"SketchFromP5NitroEditor/sketch.pde");
-        FileLoaderAndSaver.saveFile(savingAs, c.allText, this);
+        FileLoaderAndSaver.saveFile(savingAs, theTextArea.allText, this);
 
         doTheTranslation();
 
@@ -519,7 +302,7 @@ public static void main(String args[]) {
         runCommand("./killProcessByName.sh P5NitroSketch");
       }
     }
-    c.mousePressed(mouseX, mouseY);
+    theTextArea.mousePressed(mouseX, mouseY);
   }
 
   public String runCommandInDirectory(String theCommand, File theDirectory) {

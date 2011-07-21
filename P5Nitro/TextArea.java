@@ -167,13 +167,13 @@ class TextArea {
     } 
     else if (key != PConstants.CODED && controlKeyPressed) {
       if (keyCode == 85) {
-        P5Nitro.c.clearCurrentLine();
+        P5Nitro.theTextArea.clearCurrentLine();
       } 
       else if (keyCode == 45) {
-        P5Nitro.c.zoomOut();
+        P5Nitro.theTextArea.zoomOut();
       } 
       else if (keyCode == 61) {
-        P5Nitro.c.zoomIn();
+        P5Nitro.theTextArea.zoomIn();
       }
       if (keyCode == 86 ) {
         //clear();

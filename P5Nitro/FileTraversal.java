@@ -25,7 +25,8 @@ import java.util.*;
 
 public class FileTraversal {
   
-	public final Vector nonRecursivelyListDirectoriesInside( final File f ) throws IOException {
+	public final Vector nonRecursivelyListDirectoriesInside( final File f ) {
+                try{
 
                 Vector returnedListOfDirectories;
 		if (f.isDirectory()) {
@@ -38,6 +39,11 @@ public class FileTraversal {
 			return returnedListOfDirectories;
 		}
                 return null;
+                }
+                catch (Exception e) {
+                  System.out.println("Exception in function nonRecursivelyListDirectoriesInside:" + e);
+                  return null;
+                }
 	}
 
 	public final Vector nonRecursivelyListFilesInside( final File f ) throws IOException {
