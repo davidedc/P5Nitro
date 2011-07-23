@@ -14,6 +14,7 @@ So here is how to do it.
 4. Ok now you should have an app in a place like:
 
   /P5Nitro/ToolsAndSources/P5Nitro/application.macosx/
+
 5. Copy the .app from that folder and put it inside the top P5Nitro folder
 6. so now the app should be in:
 
