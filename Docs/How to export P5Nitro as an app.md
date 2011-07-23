@@ -26,18 +26,21 @@ into the inside of the app. Go into:
 * Go to:
 
       /P5Nitro/P5Nitro.app/Contents/Resources/Java/
+
 This directory should contain two jar files. Rename P5Nitro.jar to P5Nitro.zip
 and unpack it in place (you can double-click it in Finder)
 * in the unpacked folder, (which should be named P5Nitro), delete the data folder
 * Now with the terminal go to:
 
       whereverYouPutP5Nitro/P5Nitro/P5Nitro.app/Contents/Resources/Java/P5Nitro
+
 and make the jar anew:
 
       jar -cvf ../P5Nitro.jar *
 * Now you can delete the P5Nitro directory:
 
       /P5Nitro/P5Nitro.app/Contents/Resources/Java/P5Nitro
+
 and the .zip file:
 
       /P5Nitro/P5Nitro.app/Contents/Resources/Java/P5Nitro.zip
