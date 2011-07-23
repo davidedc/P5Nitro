@@ -46,13 +46,17 @@ public class P5Nitro extends PApplet {
   // Ideally I'd like to initialise these string here but I can't,
   // because datapath("") doesn't return the right value (i.e the
   // path of the data directory of the sketch) if placed here, for
-  // some reason
+  // some reason. So I prefer to initialise them all later
+  // in the setup method.
   String compiledSketchesDirectoryRelativeToDataPath;
   String compiledSketchesDirectory;
   String templatesDirectory;
   String compiledSketchFromEditorDirectory;
   String theDataPath;
   String compiledSketchAppDirectory;
+  String sourceSketchesDirectoryRelativeToDataPath;
+  String sourceSketchesDirectory;
+  String sourceSketchFromEditorDirectory;
 
   // These two booleans toggle between two modes: the flash
   // mode and the opengl mode. In the flash mode, we render the
@@ -114,11 +118,14 @@ public class P5Nitro extends PApplet {
 
     // now setup some shortcuts for some frequently used directories
     theDataPath = dataPath("");
-    compiledSketchesDirectoryRelativeToDataPath = "/../../CompiledSketches/";
+    compiledSketchesDirectoryRelativeToDataPath = "/../../../CompiledSketches/";
     compiledSketchesDirectory = theDataPath+compiledSketchesDirectoryRelativeToDataPath;
     templatesDirectory = theDataPath+"/templates/";
     compiledSketchFromEditorDirectory = compiledSketchesDirectory+"SketchFromP5NitroEditor/";
     compiledSketchAppDirectory =  compiledSketchFromEditorDirectory+"OSXApp/";
+    sourceSketchesDirectoryRelativeToDataPath = "../../../Sketches/";
+    sourceSketchesDirectory = theDataPath+"../../../Sketches/";
+    sourceSketchFromEditorDirectory = sourceSketchesDirectory+"SketchFromP5NitroEditor/";
 
     outerBackgroundColor = color(255);
     // the last boolean is the P5Nitro mode
@@ -143,7 +150,7 @@ public class P5Nitro extends PApplet {
   public void doTheTranslation() {
 
     Vector sketchesInSketchesDirectory = null;
-    sketchesInSketchesDirectory = new FileTraversal().nonRecursivelyListDirectoriesInside( new File(theDataPath+"../../Sketches/"));
+    sketchesInSketchesDirectory = new FileTraversal().nonRecursivelyListDirectoriesInside( new File(sourceSketchesDirectory));
 
     println("System.getProperty(\"user.dir\"): "+System.getProperty("user.dir"));
     println("dataPath(\"\"): "+theDataPath);
@@ -305,7 +312,7 @@ public class P5Nitro extends PApplet {
 
         //System.out.println(theDataPath);
         //System.out.println(ShellCommandExecutor.runCommand("pwd"));
-        File savingAs = new File(theDataPath+"../../Sketches/"+"SketchFromP5NitroEditor/sketch.pde");
+        File savingAs = new File(sourceSketchFromEditorDirectory +"/sketch.pde");
         FileLoaderAndSaver.saveFile(savingAs, theTextArea.allText, this);
 
         doTheTranslation();
