@@ -33,6 +33,7 @@ import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;
 import java.util.*;
+import java.io.File;
 
 // this import is to make the window transparent, so you don't see anything
 // it would be better to not open the window at all,
@@ -50,6 +51,7 @@ public class P5Nitro extends PApplet {
   String compiledSketchesDirectory;
   String templatesDirectory;
   String compiledSketchFromEditorDirectory;
+  String theDataPath;
 
   // These two booleans toggle between two modes: the flash
   // mode and the opengl mode. In the flash mode, we render the
@@ -110,9 +112,10 @@ public class P5Nitro extends PApplet {
      */
 
     // now setup some shortcuts for some frequently used directories
+    theDataPath = dataPath("");
     compiledSketchesDirectoryRelativeToDataPath = "/../../CompiledSketches/";
-    compiledSketchesDirectory = dataPath("")+compiledSketchesDirectoryRelativeToDataPath;
-    templatesDirectory = dataPath("")+"/templates/";
+    compiledSketchesDirectory = theDataPath+compiledSketchesDirectoryRelativeToDataPath;
+    templatesDirectory = theDataPath+"/templates/";
     compiledSketchFromEditorDirectory = compiledSketchesDirectory+"SketchFromP5NitroEditor/";
 
     outerBackgroundColor = color(255);
@@ -138,10 +141,10 @@ public class P5Nitro extends PApplet {
   public void doTheTranslation() {
 
     Vector sketchesInSketchesDirectory = null;
-    sketchesInSketchesDirectory = new FileTraversal().nonRecursivelyListDirectoriesInside( new File(dataPath("")+"../../Sketches/"));
+    sketchesInSketchesDirectory = new FileTraversal().nonRecursivelyListDirectoriesInside( new File(theDataPath+"../../Sketches/"));
 
     println("System.getProperty(\"user.dir\"): "+System.getProperty("user.dir"));
-    println("dataPath(\"\"): "+dataPath(""));
+    println("dataPath(\"\"): "+theDataPath);
     println("sketchPath(\"\"): "+sketchPath(""));
 
 
@@ -195,7 +198,7 @@ public class P5Nitro extends PApplet {
 
 
         // remove all the stuff about this sketch in the compiled directory
-        runCommandInDirectory("rm -rdf "+sketchName+"/", new File(compiledSketchesDirectory));
+        ShellCommandExecutor.runCommandInDirectory("rm -rdf "+sketchName+"/", compiledSketchesDirectory);
         //System.exit(1);
 
         String outputFileName;
@@ -239,15 +242,6 @@ public class P5Nitro extends PApplet {
       }
       XCodeProjectMaker.maxeXCodeProject( sketchName, templatesDirectory, compiledSketchXCodeDirectory, compiledSketchDirectory, this, sketchesInSketchesDirectory.get(i)+"");
     }
-    /*
-    String mergedSketch = SketchMerger.mergeSketchInDirectory(
-     new File("/Users/davidedellacasa/Desktop/inputFilesForTranslatorFolder/") ,
-     this
-     );
-     
-     println("merged file:");
-     println(mergedSketch);
-     */
   }
 
   void keyPressed() {
@@ -267,68 +261,46 @@ public class P5Nitro extends PApplet {
   }
 
   void mousePressed() {
-    if (P5NitroMode) {    
 
+    System.out.println("mouseX:"+mouseX);
+    System.out.println("mouseY:"+mouseY);
+
+    if (P5NitroMode) {    
       if (mouseX > 20 && mouseX < 62 && mouseY > 15 && mouseY < 56) {
         println("pressed play");
 
-        //System.out.println(dataPath(""));
-        //System.out.println(runCommand("pwd"));
-        File savingAs = new File(dataPath("")+"../../Sketches/"+"SketchFromP5NitroEditor/sketch.pde");
+        //System.out.println(theDataPath);
+        //System.out.println(ShellCommandExecutor.runCommand("pwd"));
+        File savingAs = new File(theDataPath+"../../Sketches/"+"SketchFromP5NitroEditor/sketch.pde");
         FileLoaderAndSaver.saveFile(savingAs, theTextArea.allText, this);
 
         doTheTranslation();
 
         println("creating bin directory");
-        runCommandInDirectory("mkdir bin", new File(compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/"));
+        ShellCommandExecutor.runCommandInDirectory("mkdir bin", compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/");
 
         println("copying the cached bin directory");
-        runCommandInDirectory("cp -RLp " + dataPath("") + "/cachedBin/ ./bin/", new File(compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/"));
+        ShellCommandExecutor.runCommandInDirectory("cp -RLp " + theDataPath + "/cachedBin/ ./bin/", compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/");
 
         println("chmodding the build binaries script");
-        runCommandInDirectory("chmod 777 buildTheBinaries.sh", new File(compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/"));
+        ShellCommandExecutor.runCommandInDirectory("chmod 777 buildTheBinaries.sh", compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/");
 
         println("launching the binary generator" );  
-        runCommandInDirectory("./buildTheBinaries.sh", new File(compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/"));
+        ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/");
 
         print("opening the app");
-        runCommandInDirectory("open P5NitroSketch.app", new File(compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/bin/cpp/Mac"));
+        ShellCommandExecutor.runCommandInDirectory("open P5NitroSketch.app", compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/bin/cpp/Mac");
 
         return;
       }
 
       else if (mouseX > 86 && mouseX < 133 && mouseY > 15 && mouseY < 56) {
         println("pressed stop");
-        runCommand("./killProcessByName.sh P5NitroSketch");
+        ShellCommandExecutor.runCommandInDirectory("./killProcessByName.sh P5NitroSketch", theDataPath);
       }
     }
     theTextArea.mousePressed(mouseX, mouseY);
   }
 
-  public String runCommandInDirectory(String theCommand, File theDirectory) {
-
-    String theReturnedString = "";  
-
-    try {  
-      Process p = Runtime.getRuntime().exec(theCommand, null, theDirectory);  
-
-      BufferedReader in = new BufferedReader(  
-      new InputStreamReader(p.getInputStream()));  
-      String line = null;  
-      while ( (line = in.readLine ()) != null) {  
-        //System.out.println(line);  
-        theReturnedString = theReturnedString + "\n" + line;
-      }
-    } 
-    catch (IOException e) {  
-      e.printStackTrace();
-    }
-    return theReturnedString;
-  }
-
-
-  public String runCommand(String theCommand) {
-    return runCommandInDirectory( theCommand, new File(dataPath("")));
-  }
 }
 
