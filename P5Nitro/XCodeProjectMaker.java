@@ -172,15 +172,6 @@ class XCodeProjectMaker {
       System.out.println("putting the translated haxe files into the xcode src directory");
       DirectoryCopier.copyDirectory(new File(compiledSketchDirectory+"/translatedToHaxe"), new File(compiledSketchXCodeDirectory+"/haxe/src/") );
 
-      // now copy all additional haxe files
-      // into the xcode folder              
-      // these are generic files like 
-      System.out.println("copy all the additional haxe files in the xcode folder");
-      DirectoryCopier.copyDirectory( new File(templatesDirectory+"additionalHaxeFilesToBeCopiedToProject/"), new File(compiledSketchXCodeDirectory+"/haxe/src/") );
-
-      // now copy all additional haxe files that are sketch-specific
-      // into the xcode folder              
-      DirectoryCopier.copyDirectory(new File(sketchPath + "/data/additionalHaxeFilesToBeCopiedToProject"), new File(compiledSketchXCodeDirectory+"/haxe/src/") );
     }
 
   }

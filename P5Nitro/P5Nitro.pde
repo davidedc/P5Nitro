@@ -52,6 +52,7 @@ public class P5Nitro extends PApplet {
   String templatesDirectory;
   String compiledSketchFromEditorDirectory;
   String theDataPath;
+  String compiledSketchAppDirectory;
 
   // These two booleans toggle between two modes: the flash
   // mode and the opengl mode. In the flash mode, we render the
@@ -117,6 +118,7 @@ public class P5Nitro extends PApplet {
     compiledSketchesDirectory = theDataPath+compiledSketchesDirectoryRelativeToDataPath;
     templatesDirectory = theDataPath+"/templates/";
     compiledSketchFromEditorDirectory = compiledSketchesDirectory+"SketchFromP5NitroEditor/";
+    compiledSketchAppDirectory =  compiledSketchFromEditorDirectory+"OSXApp/";
 
     outerBackgroundColor = color(255);
     // the last boolean is the P5Nitro mode
@@ -158,6 +160,7 @@ public class P5Nitro extends PApplet {
 
       String compiledSketchDirectory = compiledSketchesDirectory+sketchName;
       String compiledSketchXCodeDirectory = compiledSketchDirectory+"/XCodeProject" + sketchName;
+      String compiledSketchTranslatedToHaxeDirectory = compiledSketchDirectory+"/translatedToHaxe/";
 
       //if (!sketchName.equals("BubblesGAMEv26") && !sketchName.equals("Chain") && !sketchName.equals("CountDownAprilFoolsV1")) continue;
 
@@ -199,7 +202,6 @@ public class P5Nitro extends PApplet {
 
         // remove all the stuff about this sketch in the compiled directory
         ShellCommandExecutor.runCommandInDirectory("rm -rdf "+sketchName+"/", compiledSketchesDirectory);
-        //System.exit(1);
 
         String outputFileName;
 
@@ -209,7 +211,7 @@ public class P5Nitro extends PApplet {
         else if (openGL)
           MainHeaderTemplate = MainHeaderTemplate.replaceAll("/\\*ifOpenGL", "").replaceAll("endifOpenGL\\*/", "");
         Translator.transformedProgram = Translator.transformedProgram.replaceAll("class\\s*Main\\s*extends\\s*Bitmap\\s*\\{", MainHeaderTemplate);
-        outputFileName = compiledSketchDirectory+"/translatedToHaxe/Main.hx"; 
+        outputFileName = compiledSketchTranslatedToHaxeDirectory+"Main.hx"; 
         FileLoaderAndSaver.saveFile( new File(outputFileName), Translator.transformedProgram, this);
 
         // PGraphics spawns two versions of itself: the openGL accelerated version used for the main
@@ -217,7 +219,7 @@ public class P5Nitro extends PApplet {
         // note that if the flash flag is set then they are both software-rendered bitmaps
 
           String PGraphicsTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"PGraphics.template"), this);
-        outputFileName = compiledSketchDirectory+"/translatedToHaxe/PGraphicsRoot.hx"; 
+        outputFileName = compiledSketchTranslatedToHaxeDirectory+"PGraphicsRoot.hx"; 
         if (flash)
           PGraphicsTemplate = PGraphicsTemplate.replaceAll("/\\*ifFlash", "").replaceAll("endifFlash\\*/", "");
         else if (openGL)
@@ -226,21 +228,53 @@ public class P5Nitro extends PApplet {
         FileLoaderAndSaver.saveFile( new File(outputFileName), PGraphicsTemplate, this);
 
         PGraphicsTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"PGraphics.template"), this);
-        outputFileName = compiledSketchDirectory+"/translatedToHaxe/PGraphics.hx"; 
+        outputFileName = compiledSketchTranslatedToHaxeDirectory+"PGraphics.hx"; 
         PGraphicsTemplate = PGraphicsTemplate.replaceAll("/\\*ifFlash", "").replaceAll("endifFlash\\*/", "");
         FileLoaderAndSaver.saveFile( new File(outputFileName), PGraphicsTemplate, this);
 
         String PImageTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"PImage.template"), this);
-        outputFileName = compiledSketchDirectory+"/translatedToHaxe/PImage.hx";
+        outputFileName = compiledSketchTranslatedToHaxeDirectory+"PImage.hx";
         FileLoaderAndSaver.saveFile( new File(outputFileName), PImageTemplate, this);
 
         String NMLProjectFileTemplate = FileLoaderAndSaver.loadFile(new File(templatesDirectory+"NmmlProjectFile.template"), this);
-        outputFileName = compiledSketchDirectory+"/translatedToHaxe/P5NitroSketch.nmml"; 
+        outputFileName = compiledSketchTranslatedToHaxeDirectory+"P5NitroSketch.nmml"; 
         NMLProjectFileTemplate = NMLProjectFileTemplate.replaceAll("SKETCHWIDTH", Translator.frameSizeXFromSource+"").replaceAll("SKETCHHEIGHT", Translator.frameSizeYFromSource+"").replaceAll("FRAMERATE", Translator.frameRateFromSource+"");
 
         FileLoaderAndSaver.saveFile( new File(outputFileName), NMLProjectFileTemplate, this);
-      }
+
+        // now copy all additional haxe files
+        System.out.println("copy all the additional haxe files");
+        DirectoryCopier.copyDirectory( new File(templatesDirectory+"additionalHaxeFilesToBeCopiedToProject/"), new File(compiledSketchTranslatedToHaxeDirectory) );
+
+        // now copy all additional haxe files that are sketch-specific
+        DirectoryCopier.copyDirectory(new File(sketchPath + "/data/additionalHaxeFilesToBeCopiedToProject"), new File(compiledSketchTranslatedToHaxeDirectory) );
+      
+      } // end of if (Translator.transformedProgram != null)
+      
       XCodeProjectMaker.maxeXCodeProject( sketchName, templatesDirectory, compiledSketchXCodeDirectory, compiledSketchDirectory, this, sketchesInSketchesDirectory.get(i)+"");
+      
+    if (P5NitroMode) {
+        DirectoryCopier.copyDirectory(new File(compiledSketchTranslatedToHaxeDirectory), new File(compiledSketchAppDirectory) );
+        
+        println("creating the directory where the app will be");
+        ShellCommandExecutor.runCommandInDirectory("mkdir " + compiledSketchAppDirectory, theDataPath);
+
+        println("creating bin directory");
+        ShellCommandExecutor.runCommandInDirectory("mkdir bin", compiledSketchAppDirectory);
+
+        println("copying the cached bin directory");
+        ShellCommandExecutor.runCommandInDirectory("cp -RLp " + theDataPath + "/cachedBin/ ./bin/", compiledSketchAppDirectory);
+
+        println("chmodding the build binaries script");
+        ShellCommandExecutor.runCommandInDirectory("chmod 777 buildTheBinaries.sh", compiledSketchAppDirectory);
+
+        println("launching the binary generator" );  
+        ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchAppDirectory);
+
+        print("opening the app");
+        ShellCommandExecutor.runCommandInDirectory("open P5NitroSketch.app", compiledSketchAppDirectory + "/bin/cpp/Mac");
+    }
+
     }
   }
 
@@ -275,22 +309,6 @@ public class P5Nitro extends PApplet {
         FileLoaderAndSaver.saveFile(savingAs, theTextArea.allText, this);
 
         doTheTranslation();
-
-        println("creating bin directory");
-        ShellCommandExecutor.runCommandInDirectory("mkdir bin", compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/");
-
-        println("copying the cached bin directory");
-        ShellCommandExecutor.runCommandInDirectory("cp -RLp " + theDataPath + "/cachedBin/ ./bin/", compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/");
-
-        println("chmodding the build binaries script");
-        ShellCommandExecutor.runCommandInDirectory("chmod 777 buildTheBinaries.sh", compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/");
-
-        println("launching the binary generator" );  
-        ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/");
-
-        print("opening the app");
-        ShellCommandExecutor.runCommandInDirectory("open P5NitroSketch.app", compiledSketchFromEditorDirectory + "XCodeProjectSketchFromP5NitroEditor/haxe/src/bin/cpp/Mac");
-
         return;
       }
 
@@ -301,6 +319,5 @@ public class P5Nitro extends PApplet {
     }
     theTextArea.mousePressed(mouseX, mouseY);
   }
-
 }
 
