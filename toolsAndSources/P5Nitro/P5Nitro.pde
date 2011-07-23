@@ -40,7 +40,6 @@ import java.io.File;
 // but I couldn't manage.
 // import com.sun.awt.AWTUtilities;
 
-
 public class P5Nitro extends PApplet {
   // These are shortcuts for building a number of paths later on.
   // Ideally I'd like to initialise these string here but I can't,
