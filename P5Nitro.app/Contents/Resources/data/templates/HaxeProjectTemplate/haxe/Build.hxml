@@ -1,0 +1,6 @@
+-main IPhoneMain
+#Replace the following line with a path to your favourite source code
+-cp src
+-lib nme
+-D iphone
+--remap flash:nme

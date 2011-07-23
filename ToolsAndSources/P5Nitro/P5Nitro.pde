@@ -25,7 +25,6 @@ Copyright (C) 2011 by all P5Nitro contributors
 // just look for COMMENTEDOUTBECAUSEOFwriteUTFBytesToBuffergetPixelAtERROR
 // and for COMMENTEDOUTBECAUSEOFgetPixelAtERROR
 
-
 import javax.swing.JFileChooser;
 
 import java.applet.*;
@@ -80,17 +79,25 @@ public class P5Nitro extends PApplet {
   // P5NitroMode is when the fancy editor that resembles processing
   // comes out.
   static boolean P5NitroMode = true;
+  static boolean runningAsApp = false;
 
 
-  // This main method needs to be added when you use the "export as app"
+  // This main method needs to be added when you use the "Export Application"
   // functionality of Processing in OSX. If you don't, then the generated
   // OSX application doesn't start, it throws an error upon launch saying
   // that main is not found
-  /*
-   public static void main(String args[]) {
-   PApplet.main(new String[] {  "P5Nitro" });
-   }
-   */
+  // See the "How to export P5Nitro as an app" document
+  // in the Docs directory for more info.
+
+/*
+  public static void main(String args[]) {
+    runningAsApp = true;
+    PApplet.main(new String[] {  
+      "P5Nitro"
+    }
+    );
+  }
+*/
 
   // this is to make the window transparent so that the user is not confused
   // by an empty window that does nothing.
@@ -115,15 +122,30 @@ public class P5Nitro extends PApplet {
      AWTUtilities.setWindowOpacity(frame, 0.0f);
      */
 
-    // now setup some shortcuts for some frequently used directories
     theDataPath = dataPath("");
-    compiledSketchesDirectoryRelativeToDataPath = "/../../../CompiledSketches/";
+
+    // now setup some shortcuts for some frequently used directories
+    if (!runningAsApp) {
+      System.out.println("not running as app");
+      compiledSketchesDirectoryRelativeToDataPath = "/../../../CompiledSketches/";
+      sourceSketchesDirectoryRelativeToDataPath = "../../../Sketches/";
+    }
+    else {
+      // if you are running P5Nitro as an app rather than from Processing,
+      // then the relative position of the directories changes a bit.
+      System.out.println(" running as app");
+      System.out.println(" current data directory: " + theDataPath);
+      theDataPath = new File(theDataPath).getParent() + "/P5Nitro.app/Contents/Resources/data/";
+      System.out.println(" redefining data directory to be: " + theDataPath);
+      compiledSketchesDirectoryRelativeToDataPath = "/../../../../CompiledSketches/";
+      sourceSketchesDirectoryRelativeToDataPath = "../../../../Sketches/";
+    }
+
     compiledSketchesDirectory = theDataPath+compiledSketchesDirectoryRelativeToDataPath;
     templatesDirectory = theDataPath+"/templates/";
     compiledSketchFromEditorDirectory = compiledSketchesDirectory+"SketchFromP5NitroEditor/";
     compiledSketchAppDirectory =  compiledSketchFromEditorDirectory+"OSXApp/";
-    sourceSketchesDirectoryRelativeToDataPath = "../../../Sketches/";
-    sourceSketchesDirectory = theDataPath+"../../../Sketches/";
+    sourceSketchesDirectory = theDataPath+sourceSketchesDirectoryRelativeToDataPath;
     sourceSketchFromEditorDirectory = sourceSketchesDirectory+"SketchFromP5NitroEditor/";
 
     outerBackgroundColor = color(255);
@@ -254,14 +276,13 @@ public class P5Nitro extends PApplet {
 
         // now copy all additional haxe files that are sketch-specific
         DirectoryCopier.copyDirectory(new File(sketchPath + "/data/additionalHaxeFilesToBeCopiedToProject"), new File(compiledSketchTranslatedToHaxeDirectory) );
-      
       } // end of if (Translator.transformedProgram != null)
-      
+
       XCodeProjectMaker.maxeXCodeProject( sketchName, templatesDirectory, compiledSketchXCodeDirectory, compiledSketchDirectory, this, sketchesInSketchesDirectory.get(i)+"");
-      
-    if (P5NitroMode) {
+
+      if (P5NitroMode) {
         DirectoryCopier.copyDirectory(new File(compiledSketchTranslatedToHaxeDirectory), new File(compiledSketchAppDirectory) );
-        
+
         println("creating the directory where the app will be");
         ShellCommandExecutor.runCommandInDirectory("mkdir " + compiledSketchAppDirectory, theDataPath);
 
@@ -279,8 +300,7 @@ public class P5Nitro extends PApplet {
 
         print("opening the app");
         ShellCommandExecutor.runCommandInDirectory("open P5NitroSketch.app", compiledSketchAppDirectory + "/bin/cpp/Mac");
-    }
-
+      }
     }
   }
 
