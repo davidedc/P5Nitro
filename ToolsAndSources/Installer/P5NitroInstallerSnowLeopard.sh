@@ -16,8 +16,8 @@ if [ ! -s testToSeeIfHaxelibIsInstalled.txt ]
     curl http://nekovm.org/_media/neko-1.8.1-osx.tar.gz > neko.tgz
     curl http://haxe.org/file/haxe-2.07-osx.tar.gz > haxe.tgz
     #curl http://processing.googlecode.com/files/processing-1.5.1-macosx.zip > processing.zip
-    tar -zxvf neko.tgz $HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/
-    tar -zxvf haxe.tgz $HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/
+    tar -zxvf neko.tgz -C $HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/
+    tar -zxvf haxe.tgz -C $HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/
     #unzip processing.zip
     rm haxe.tgz neko.tgz
     export HAXEPATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/haxe-2.07-osx/
