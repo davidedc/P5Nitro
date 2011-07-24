@@ -1,6 +1,7 @@
 cd ~/Downloads
 curl -L https://github.com/davidedc/P5Nitro/zipball/master > P5NitroCheckout.zip
 unzip P5NitroCheckout.zip
+mv davidedc-P5Nitro-* P5Nitro
 
 haxelib > testToSeeIfHaxelibIsInstalled.txt
 
