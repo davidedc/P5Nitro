@@ -13,7 +13,7 @@ if [ -s testToSeeIfHaxelibIsInstalled.txt ]
     haxelib run nme build P5NitroSketch.nmml cpp
 fi
 
-if [ !(-s testToSeeIfHaxelibIsInstalled.txt) ]
+if [ ! -s testToSeeIfHaxelibIsInstalled.txt ]
   then
     echo "haxelib has been installed as portable"
     export HAXEPATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/haxe-2.07-osx/
