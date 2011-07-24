@@ -9,7 +9,7 @@ if [ -s testToSeeIfHaxelibIsInstalled.txt ]
     echo "haxelib is already installed"
 fi
 
-if [ !(-s testToSeeIfHaxelibIsInstalled.txt) ]
+if [ ! -s testToSeeIfHaxelibIsInstalled.txt ]
   then
     echo "haxelib has not been installed"
     curl http://nekovm.org/_media/neko-1.8.1-osx.tar.gz > neko.tgz
