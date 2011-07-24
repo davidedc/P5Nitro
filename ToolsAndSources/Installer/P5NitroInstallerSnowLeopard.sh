@@ -13,6 +13,7 @@ fi
 if [ ! -s testToSeeIfHaxelibIsInstalled.txt ]
   then
     echo "haxelib has not been installed"
+    mkdir P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib
     curl http://nekovm.org/_media/neko-1.8.1-osx.tar.gz > neko.tgz
     curl http://haxe.org/file/haxe-2.07-osx.tar.gz > haxe.tgz
     #curl http://processing.googlecode.com/files/processing-1.5.1-macosx.zip > processing.zip
