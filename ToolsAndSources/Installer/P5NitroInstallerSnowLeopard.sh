@@ -1,7 +1,6 @@
 cd ~/Downloads
-curl https://github.com/davidedc/P5Nitro/raw/master/ToolsAndSources/GitClient/OSX/git.zip > git.zip
-unzip git.zip
-./git clone git://github.com/davidedc/P5Nitro.git
+curl -L https://github.com/davidedc/P5Nitro/zipball/master > P5NitroCheckout.zip
+unzip P5NitroCheckout.zip
 
 haxelib > testToSeeIfHaxelibIsInstalled.txt
 
