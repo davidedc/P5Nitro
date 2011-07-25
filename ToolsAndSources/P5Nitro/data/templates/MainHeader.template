@@ -20,7 +20,7 @@ import nme.Timer;
 class Main {
 	
 	public static function main() {
-
+		//ifNekoStartComment //ifNekoEndComment Lib.create(function(){
 		g = new PGraphicsRoot();
 		//trace("entering the new function");
 		
@@ -44,14 +44,19 @@ class Main {
 		flash.Lib.current.addEventListener(nme.events.MouseEvent.MOUSE_MOVE, mouseMoveCatcherFunction);
 		flash.Lib.current.addEventListener(nme.events.MouseEvent.CLICK, mouseClickCatcherFunction);
 
+		//ifNekoStartComment
 		Lib.stage.quality = nme.display.StageQuality.LOW;
+		//ifNekoEndComment
 		//Lib.stage.quality = nme.display.StageQuality.BEST;
 		//Lib.stage.quality = nme.display.StageQuality.HIGH;
 		
 		millisecondsWhenSketchStarted = Std.int(nme.Timer.stamp()*1000);
+		//ifNekoStartComment
 		HighDpiScreenManager.dpiScaleFactor = Lib.stage.dpiScale;
+		//ifNekoEndComment
 
 		setupArgCount0();
+		//ifNekoStartComment //ifNekoEndComment },320,480,60,0xffffff,(1*Lib.HARDWARE) | Lib.RESIZABLE);
 	}
 	
 
@@ -87,6 +92,7 @@ class Main {
 		  // Think of a game timeout for example - we want the
 		  // background time not to be counted.
 		  
+		  //ifNekoStartComment
 		  var secondsSinceLastDraw:Float;
 		  if (timeStampOfLastDraw == 0) {
 			  timeStampOfLastDraw = Timer.stamp();
@@ -97,7 +103,8 @@ class Main {
 		  	//trace("it seems that the app has been backgrounded for this so far: " + millisecondsTheAppHasSpentBackgrounded);
 		  }
 		  timeStampOfLastDraw = Timer.stamp();
-		  
+		  //ifNekoEndComment
+
   		// I tried this to avoid jitter and it actually works fine
   		// it doesn't slow down the sketch at all and jitter
   		// is completely gone. Note that this should be turned

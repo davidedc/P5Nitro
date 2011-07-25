@@ -29,15 +29,4 @@ if [ ! -s testToSeeIfHaxelibIsInstalled.txt ]
     export LD_LIBRARY_PATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/nme/2,0,1/ndll/Mac/:$LD_LIBRARY_PATH
 fi
 
-which gcc > testToSeeIfGccIsInstalled.txt
-if [ -s testToSeeIfGccIsInstalled.txt ]
-  then
-	echo "gcc is installed"
-	haxelib run nme build P5NitroSketch.nmml cpp
-fi
-
-if [ ! -s testToSeeIfGccIsInstalled.txt ]
-  then
-	echo "gcc is not installed"
-	haxe -main Main -neko P5NitroSketch.n -lib nme -lib hxcpp --remap flash:nme
-fi
+neko P5NitroSketch.n

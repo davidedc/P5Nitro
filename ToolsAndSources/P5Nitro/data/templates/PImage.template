@@ -24,6 +24,7 @@ class PImage extends Bitmap{
     }
     
     public function loadPixelsArgCount0() {
+		//ifNekoStartComment
     	pixels = new Array();
 		bitmapData.lock();
 		var theHeight:Int = Std.int(height);
@@ -35,6 +36,7 @@ class PImage extends Bitmap{
 				pixels.push(bitmapData.getPixel32(x, y));
 				//pixels[index++] = bitmapData.getPixel32(x, y);
 		bitmapData.unlock();
+		//ifNekoEndComment
 	}
 
 
@@ -53,6 +55,7 @@ class PImage extends Bitmap{
 
 			//var anotherBitmapData:ByteArray = new ByteArray(theHeight * theWidth * 4);
 
+		    //ifNekoStartComment
 			if (pixels != null) {
 				for (y in 0 ... theHeight )
 					for (x in 0 ... theWidth ){
@@ -67,18 +70,23 @@ class PImage extends Bitmap{
 						//anotherBitmapData.writeInt(pixels[x]); // not supported, unfortunately
 					}
 			}
+		    //ifNekoEndComment
 			bitmapData.unlock();
 		//bitmapData.setPixels(new Rectangle(x, y, Std.int(width), Std.int(height)), anotherBitmapData);
 		}
 
 	public function getArgCount2( x:Int, y:Int):Int
 	{
+		    //ifNekoStartComment
 			return bitmapData.getPixel32(x, y);
+		    //ifNekoEndComment return 0;
 	}
 
 	public function setArgCount3( x:Int, y:Int, color:Int ):Void {
+		//ifNekoStartComment
 		//[TODO] should this instantly nullify pixels[] array?
 		bitmapData.setPixel32(x, y, color);
+		//ifNekoEndComment
 	}
 
 }

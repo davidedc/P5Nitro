@@ -52,6 +52,7 @@ public class P5Nitro extends PApplet {
   String compiledSketchFromEditorDirectory;
   String theDataPath;
   String compiledSketchAppDirectory;
+  String compiledSketchNekoDirectory;
   String sourceSketchesDirectoryRelativeToDataPath;
   String sourceSketchesDirectory;
   String sourceSketchFromEditorDirectory;
@@ -89,15 +90,15 @@ public class P5Nitro extends PApplet {
   // See the "How to export P5Nitro as an app" document
   // in the Docs directory for more info.
 
-/*
+  /*
   public static void main(String args[]) {
-    runningAsApp = true;
-    PApplet.main(new String[] {  
-      "P5Nitro"
-    }
-    );
-  }
-*/
+   runningAsApp = true;
+   PApplet.main(new String[] {  
+   "P5Nitro"
+   }
+   );
+   }
+   */
 
   // this is to make the window transparent so that the user is not confused
   // by an empty window that does nothing.
@@ -145,6 +146,7 @@ public class P5Nitro extends PApplet {
     templatesDirectory = theDataPath+"/templates/";
     compiledSketchFromEditorDirectory = compiledSketchesDirectory+"SketchFromP5NitroEditor/";
     compiledSketchAppDirectory =  compiledSketchFromEditorDirectory+"OSXApp/";
+    compiledSketchNekoDirectory =  compiledSketchFromEditorDirectory+"Neko/";
     sourceSketchesDirectory = theDataPath+sourceSketchesDirectoryRelativeToDataPath;
     sourceSketchFromEditorDirectory = sourceSketchesDirectory+"SketchFromP5NitroEditor/";
 
@@ -286,6 +288,12 @@ public class P5Nitro extends PApplet {
         println("creating the directory where the app will be");
         ShellCommandExecutor.runCommandInDirectory("mkdir " + compiledSketchAppDirectory, theDataPath);
 
+        println("creating the directory where the neko output will be");
+        ShellCommandExecutor.runCommandInDirectory("mkdir " + compiledSketchNekoDirectory, theDataPath);
+        DirectoryCopier.copyDirectory(new File(compiledSketchTranslatedToHaxeDirectory), new File(compiledSketchNekoDirectory) );
+        println("chmodding the build binaries script");
+        ShellCommandExecutor.runCommandInDirectory("chmod 777 buildTheBinaries.sh", compiledSketchNekoDirectory);
+
         println("creating bin directory");
         ShellCommandExecutor.runCommandInDirectory("mkdir bin", compiledSketchAppDirectory);
 
@@ -295,11 +303,52 @@ public class P5Nitro extends PApplet {
         println("chmodding the build binaries script");
         ShellCommandExecutor.runCommandInDirectory("chmod 777 buildTheBinaries.sh", compiledSketchAppDirectory);
 
-        println("launching the binary generator" );  
-        ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchAppDirectory);
 
-        print("opening the app");
-        ShellCommandExecutor.runCommandInDirectory("open P5NitroSketch.app", compiledSketchAppDirectory + "/bin/cpp/Mac");
+        if (ShellCommandExecutor.runCommandInDirectory("which gcc", theDataPath).length() == 0) {
+          println("launching the neko bytecode generator" );  
+
+          String PGraphicsTemplate = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"PGraphics.hx"), this);
+          String outputFileName = compiledSketchNekoDirectory+"PGraphics.hx"; 
+          PGraphicsTemplate = PGraphicsTemplate.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/");
+          FileLoaderAndSaver.saveFile( new File(outputFileName), PGraphicsTemplate, this);
+
+          String PGraphicsRootTemplate = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"PGraphicsRoot.hx"), this);
+          outputFileName = compiledSketchNekoDirectory+"PGraphicsRoot.hx";
+          // note that we have to handle the case of two nested multiline comments! 
+          PGraphicsRootTemplate = PGraphicsRootTemplate.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/").replaceAll("/\\*ifFlash\\s*/\\*nekoStartComment", "/*").replaceAll("nekoEndComment\\*/\\s*endifFlash\\*/", "*/");
+          FileLoaderAndSaver.saveFile( new File(outputFileName), PGraphicsRootTemplate, this);
+
+          String PImageTemplate = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"PImage.hx"), this);
+          outputFileName = compiledSketchNekoDirectory+"PImage.hx"; 
+          PImageTemplate = PImageTemplate.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/");
+          FileLoaderAndSaver.saveFile( new File(outputFileName), PImageTemplate, this);
+
+          String MainFile = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"Main.hx"), this);
+          outputFileName = compiledSketchNekoDirectory+"Main.hx"; 
+          MainFile = MainFile.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/");
+          FileLoaderAndSaver.saveFile( new File(outputFileName), MainFile, this);
+
+          ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchNekoDirectory);
+          println("chmodding the build binaries script");
+          ShellCommandExecutor.runCommandInDirectory("chmod 777 launchNekoVM.sh", compiledSketchNekoDirectory);
+          println("launching the neko vm" );  
+          //ShellCommandExecutor.runCommandInDirectory("sh launchNekoVM.sh &", compiledSketchNekoDirectory);
+
+          // if you don't attach a stream to your exec, then it runs in the background
+          try {  
+            File theDirectory = new File(compiledSketchNekoDirectory);
+            Process p = Runtime.getRuntime().exec("./launchNekoVM.sh", null, theDirectory);
+          } 
+          catch (IOException e) {  
+            e.printStackTrace();
+          }
+        }
+        else {
+          println("launching the binary generator" );  
+          ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchAppDirectory);
+          print("opening the app");
+          ShellCommandExecutor.runCommandInDirectory("open P5NitroSketch.app", compiledSketchAppDirectory + "/bin/cpp/Mac");
+        }
       }
     }
   }
@@ -341,6 +390,7 @@ public class P5Nitro extends PApplet {
       else if (mouseX > 86 && mouseX < 133 && mouseY > 15 && mouseY < 56) {
         println("pressed stop");
         ShellCommandExecutor.runCommandInDirectory("./killProcessByName.sh P5NitroSketch", theDataPath);
+        ShellCommandExecutor.runCommandInDirectory("./killProcessByName.sh neko", theDataPath);
       }
     }
     theTextArea.mousePressed(mouseX, mouseY);
