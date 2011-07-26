@@ -20,10 +20,11 @@ Copyright (C) 2011 by all P5Nitro contributors
  THE SOFTWARE.
  */
 
-// 10th July 2011 ---------------------------------------
+// ---------------------------------------
 // some code had to be commented-out in the template files because nme has changed
 // just look for COMMENTEDOUTBECAUSEOFwriteUTFBytesToBuffergetPixelAtERROR
 // and for COMMENTEDOUTBECAUSEOFgetPixelAtERROR
+// and for COMMENTEDBECAUSEOFNMEMisalignment
 
 import javax.swing.JFileChooser;
 
@@ -396,4 +397,3 @@ public class P5Nitro extends PApplet {
     theTextArea.mousePressed(mouseX, mouseY);
   }
 }
-
