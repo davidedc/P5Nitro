@@ -82,6 +82,14 @@ public class P5Nitro extends PApplet {
   // comes out.
   static boolean P5NitroMode = true;
   static boolean runningAsApp = false;
+  
+  // this is because of a weird bug of processing
+  // it looks like if you click diretly on a processing window
+  // that didn'e have focus, then the mouse event has the wrong
+  // coordinates. So what we are doing here is we are waiting for
+  // a mouse move to happen. If there is no mous move, then we
+  // discard the next event.
+  static boolean OKToConsiderClicks = true;
 
 
   // This main method needs to be added when you use the "Export Application"
@@ -165,6 +173,15 @@ public class P5Nitro extends PApplet {
   }
 
   void draw() {
+    // if the window loses focus, then you'll need to actually
+    // move the mouse before mouse events are considered.
+    // This is because of a weir bug in processing where
+    // if you click on your sketch window when it doesn't have focus,
+    // then the mouse coordinates are wrong.
+    if (!frame.isFocused()) {
+        OKToConsiderClicks = false;
+    }
+    
     background(outerBackgroundColor);
     // Currently the whole of the text area is repainted each frame,
     // which is quite wasteful, we'll have to optimize this later on
@@ -333,6 +350,7 @@ public class P5Nitro extends PApplet {
           println("chmodding the build binaries script");
           ShellCommandExecutor.runCommandInDirectory("chmod 777 launchNekoVM.sh", compiledSketchNekoDirectory);
           println("launching the neko vm" );  
+          OKToConsiderClicks = false;
           //ShellCommandExecutor.runCommandInDirectory("sh launchNekoVM.sh &", compiledSketchNekoDirectory);
 
           // if you don't attach a stream to your exec, then it runs in the background
@@ -349,6 +367,7 @@ public class P5Nitro extends PApplet {
           ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchAppDirectory);
           print("opening the app");
           ShellCommandExecutor.runCommandInDirectory("open P5NitroSketch.app", compiledSketchAppDirectory + "/bin/cpp/Mac");
+          OKToConsiderClicks = false;
         }
       }
     }
@@ -370,8 +389,20 @@ public class P5Nitro extends PApplet {
     }
   }
 
-  void mousePressed() {
+  void mouseMoved() {
+    System.out.println("mouse moved");
+    OKToConsiderClicks = true;
+  }
 
+  void mousePressed() {
+    if (OKToConsiderClicks == false) {
+        System.out.println("rejecting mouse event");
+        // will still don't accept the next one though
+        // until the mouse has actually been moved
+        return;
+    }
+
+    
     System.out.println("mouseX:"+mouseX);
     System.out.println("mouseY:"+mouseY);
 
@@ -385,6 +416,7 @@ public class P5Nitro extends PApplet {
         FileLoaderAndSaver.saveFile(savingAs, theTextArea.allText, this);
 
         doTheTranslation();
+        //OKToConsiderClicks = false;
         return;
       }
 
