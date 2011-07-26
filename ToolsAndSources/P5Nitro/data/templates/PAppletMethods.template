@@ -112,7 +112,7 @@
 	        
 	        // todo in case of opengl I think we should
 	        // also clear up the shapes, after we've rendered.
-			Lib.stage.nmeRender(false);
+			//COMMENTEDBECAUSEOFNMEMisalignment Lib.stage.nmeRender(false);
 
 	        if (millisecondsToWait > 200) {
 				while ( (Timer.stamp() * 1000 - starttime) < millisecondsToWait) {
@@ -441,16 +441,19 @@
           //trace("about to read file: " + x1);
           var ba:nme.utils.ByteArray = nme.utils.ByteArray.readFile(x1);
           //trace("length of file: " + ba.length);
-          var dkdkd:String = ba.asString();
+          
+          
+          
+          //COMMENTEDBECAUSEOFNMEMisalignment var dkdkd:String = ba.asString();
           //trace("file contents: " + dkdkd);
-          var fetchedArray:Array<String> =  dkdkd.split("\\n");
+          //COMMENTEDBECAUSEOFNMEMisalignment var fetchedArray:Array<String> =  dkdkd.split("\\n");
           
 		  // the last line should always be an empty line
 		  // so we just get rid of it
 		  var arrayToBeReturned:Array<String> =  new Array<String>();
-		  for (i in 0... (fetchedArray.length - 1) ) {
-			arrayToBeReturned[i] = fetchedArray[i];
-		  }
+		  //COMMENTEDBECAUSEOFNMEMisalignment for (i in 0... (fetchedArray.length - 1) ) {
+		  //COMMENTEDBECAUSEOFNMEMisalignment 	arrayToBeReturned[i] = fetchedArray[i];
+		  //COMMENTEDBECAUSEOFNMEMisalignment }
 		  
 		  return arrayToBeReturned;
 	}
@@ -493,7 +496,7 @@
 		// COMMENTEDOUTBECAUSEOFwriteUTFBytesToBuffergetPixelAtERROR
 		//ba.writeUTFBytes(theFinalString);
 		
-		ba.writeFile(fileName);
+		//COMMENTEDBECAUSEOFNMEMisalignment ba.writeFile(fileName);
 
 	}
 
