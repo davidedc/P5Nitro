@@ -11,7 +11,7 @@
 	public static var height:Int = 480;
 	public static var frameRate:Int = 60;
 	private static var millisecondsWhenSketchStarted:Int;
-	
+
 	// these two track how much time the app has been
 	// backgrounded. This is because millis() function should
 	// only take into account the time that the
@@ -25,7 +25,7 @@
 	public static var mouseY:Int = 0;
 	public static var pmouseX:Int = 0;
 	public static var pmouseY:Int = 0;
-	
+
 	public static var PI:Float = 3.141592;
 	public static var TWO_PI:Float = 2*3.141592;
 	public static var HALF_PI:Float = 3.141592/2;
@@ -103,16 +103,16 @@
 	public static function millisArgCount0():Int {
 	   return Std.int(Timer.stamp()*1000) - millisecondsWhenSketchStarted - millisecondsTheAppHasSpentBackgrounded;
 	}
-	
+
 	public static function delayArgCount1(millisecondsToWait: Int) {
 			// busy wait - this is bad - use only for test purposes
 			// todo to make the "pure flash" equivalent, this one
 			// uses nme specific stuff
 	        var starttime:Float = nme.Timer.stamp() * 1000;
-	        
+
 	        // todo in case of opengl I think we should
 	        // also clear up the shapes, after we've rendered.
-			Lib.stage.nmeRender(false);
+			//COMMENTEDBECAUSEOFNMEMisalignment Lib.stage.nmeRender(false);
 
 	        if (millisecondsToWait > 200) {
 				while ( (Timer.stamp() * 1000 - starttime) < millisecondsToWait) {
@@ -142,7 +142,7 @@
 		public static inline function getArgCount2( x:Int, y:Int):Int {
 				return g.getArgCount2(x, y);
 		}
-	
+
 		public static inline function setArgCount3( x:Int, y:Int, color:Int ):Void {
 			//[TODO] should this instantly nullify pixels[] array?
 			g.setArgCount3(x, y, color);
@@ -175,17 +175,17 @@
 		{
 			return g.redArgCount1( aColor );
 		}
-	
+
 		public static inline function greenArgCount1( aColor:Int ):Int
 		{
 			return g.greenArgCount1( aColor );
 		}
-	
+
 		public static inline function blueArgCount1( aColor:Int ):Int
 		{
 			return g.blueArgCount1( aColor );
 		}
-	
+
 		public static inline function alphaArgCount1( aColor:Int ):Int
 		{
 			return g.alphaArgCount1( aColor );
@@ -223,7 +223,7 @@
     public static inline function imageArgCount3( img:PImage, x:Int , y:Int ) {
 			return g.imageArgCount3( img, x , y);
 	}
-	
+
 	public static inline function tintArgCount3( rc:Float, gc:Float, bc:Float )
 	{
 		g.tintArgCount3(rc,gc,bc);
@@ -250,11 +250,11 @@
 	public static inline function printArgCount1 ( theString:String): Void  {
 		 //trace(theString);
 	}
-	
+
 	public static inline function lineArgCount4( x1:Float = 0, y1:Float = 0, x2:Float = 0, y2:Float = 0):Void {
 		 g.lineArgCount4(x1,y1,x2,y2);
 	}
-	
+
 	public static inline function mapArgCount5( value:Float, istart:Float, istop:Float, ostart:Float, ostop:Float ):Float {
 		return ostart + (ostop - ostart) * ((value - istart) / (istop - istart));
 	}
@@ -270,7 +270,7 @@
 	public static inline function cosArgCount1( aNumber: Float  ):Float {
 			return g.cosArgCount1(aNumber);
 	}
-	
+
 	public static inline function rectArgCount4( x1:Float = 0, y1:Float = 0, x2:Float = 0, y2:Float = 0):Void {
 		 g.rectArgCount4( x1, y1, x2, y2 );
 	}
@@ -352,9 +352,9 @@
 
 		pmouseY = Std.int(mouseY);
 		mouseY = Std.int(event.localY);
-		
+
 		//trace("Mouse up at " + mouseX + ", "+ mouseY);
-		
+
 		//onlyIfMouseReleasedFunctionExists mouseReleasedArgCount0();
 
 	}
@@ -366,7 +366,7 @@
 
 		pmouseY = Std.int(mouseY);
 		mouseY = Std.int(event.localY);
-		
+
 		//trace("Mouse down at " + mouseX + ", "+ mouseY);
 		//onlyIfMousePressedFunctionExists mousePressedArgCount0();
 	}
@@ -377,9 +377,9 @@
 
 		pmouseY = Std.int(mouseY);
 		mouseY = Std.int(event.localY);
-		
-		
-		
+
+
+
 		//trace("Mouse move at " + mouseX + ", "+ mouseY);
 
 		//onlyIfMouseMovedFunctionExists if (!mousePressed) mouseMovedArgCount0();
@@ -392,9 +392,9 @@
 
 		pmouseY = Std.int(mouseY);
 		mouseY = Std.int(event.localY);
-		
+
 		//trace("Mouse click at " + mouseX + ", "+ mouseY);
-		
+
 		//onlyIfMouseClickedFunctionExists mouseClickedArgCount0();
 	}
 
@@ -426,7 +426,7 @@
 	public static inline function curveVertexArgCount2(x:Float, y:Float): Void{
 		g.curveVertexArgCount2(x,y);
 	}
-	
+
 	public static inline function endShapeArgCount0(): Void{
 		g.endShapeArgCount0();
 	}
@@ -441,22 +441,25 @@
           //trace("about to read file: " + x1);
           var ba:nme.utils.ByteArray = nme.utils.ByteArray.readFile(x1);
           //trace("length of file: " + ba.length);
-          var dkdkd:String = ba.asString();
+          
+          
+          
+          //COMMENTEDBECAUSEOFNMEMisalignment var dkdkd:String = ba.asString();
           //trace("file contents: " + dkdkd);
-          var fetchedArray:Array<String> =  dkdkd.split("\\n");
+          //COMMENTEDBECAUSEOFNMEMisalignment var fetchedArray:Array<String> =  dkdkd.split("\\n");
           
 		  // the last line should always be an empty line
 		  // so we just get rid of it
 		  var arrayToBeReturned:Array<String> =  new Array<String>();
-		  for (i in 0... (fetchedArray.length - 1) ) {
-			arrayToBeReturned[i] = fetchedArray[i];
-		  }
-		  
+		  //COMMENTEDBECAUSEOFNMEMisalignment for (i in 0... (fetchedArray.length - 1) ) {
+		  //COMMENTEDBECAUSEOFNMEMisalignment 	arrayToBeReturned[i] = fetchedArray[i];
+		  //COMMENTEDBECAUSEOFNMEMisalignment }
+
 		  return arrayToBeReturned;
 	}
 
 	public static function saveStringsArgCount2(fileName:String, arrayOfStrings:Array<String>):Void {
-	
+
 		// This bad hack takes away the reference to the data folder
 		// and it's due to two factors:
 		// 1) saveString saves in the sketch folder rather than
@@ -469,7 +472,7 @@
 		// The proper solution would be to create an explicit data folder
 		// in the bundle and put the data files in there and keep the
 		// data file and the files in the root separate.
-		
+
 		if (fileName.indexOf("data/") == 0) {
 			fileName = fileName.substr(5);
 			trace("saving to data folder, simplifying the path to: "+ fileName);
@@ -479,21 +482,21 @@
 			fileName = fileName.substr(7);
 			trace("saving to data folder, simplifying the path to: "+ fileName);
 		}
-		
+
 		// end of bad hack
-		
+
 		var theFinalString:String = "";
-		
+
 		// we combine the array of strings into one
 		for (i in 0...arrayOfStrings.length) {
 			theFinalString = theFinalString + arrayOfStrings[i] + "\\n";
 		}
-		
+
 		var ba:nme.utils.ByteArray = new nme.utils.ByteArray(0);
 		// COMMENTEDOUTBECAUSEOFwriteUTFBytesToBuffergetPixelAtERROR
 		//ba.writeUTFBytes(theFinalString);
-		
-		ba.writeFile(fileName);
+
+		//COMMENTEDBECAUSEOFNMEMisalignment ba.writeFile(fileName);
 
 	}
 

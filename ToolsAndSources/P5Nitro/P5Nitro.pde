@@ -51,6 +51,7 @@ public class P5Nitro extends PApplet {
   String sourceSketchesDirectoryRelativeToDataPath;
   String sourceSketchesDirectory;
   String sourceSketchFromEditorDirectory;
+  String nameOfTheOSXApp;
 
   // These two booleans toggle between two modes: the flash
   // mode and the opengl mode. In the flash mode, we render the
@@ -76,7 +77,7 @@ public class P5Nitro extends PApplet {
   // comes out.
   static boolean P5NitroMode = true;
   static boolean runningAsApp = false;
-  
+
   // this is because of a weird bug of processing
   // it looks like if you click diretly on a processing window
   // that didn'e have focus, then the mouse event has the wrong
@@ -93,15 +94,15 @@ public class P5Nitro extends PApplet {
   // See the "How to export P5Nitro as an app" document
   // in the Docs directory for more info.
 
-  /*
+/*
   public static void main(String args[]) {
-   runningAsApp = true;
-   PApplet.main(new String[] {  
-   "P5Nitro"
-   }
-   );
-   }
-   */
+    runningAsApp = true;
+    PApplet.main(new String[] {  
+      "P5Nitro"
+    }
+    );
+  }
+*/
 
   // this is to make the window transparent so that the user is not confused
   // by an empty window that does nothing.
@@ -127,6 +128,9 @@ public class P5Nitro extends PApplet {
      */
 
     theDataPath = dataPath("");
+    // note that spaces in unix need to be escaped, and since
+    // it's a string it needs double escape.
+    nameOfTheOSXApp = "P5Nitro.app";
 
     // now setup some shortcuts for some frequently used directories
     if (!runningAsApp) {
@@ -139,7 +143,7 @@ public class P5Nitro extends PApplet {
       // then the relative position of the directories changes a bit.
       System.out.println(" running as app");
       System.out.println(" current data directory: " + theDataPath);
-      theDataPath = new File(theDataPath).getParent() + "/P5Nitro.app/Contents/Resources/data/";
+      theDataPath = new File(theDataPath).getParent() + "/"+nameOfTheOSXApp + "/Contents/Resources/data/";
       System.out.println(" redefining data directory to be: " + theDataPath);
       compiledSketchesDirectoryRelativeToDataPath = "/../../../../CompiledSketches/";
       sourceSketchesDirectoryRelativeToDataPath = "../../../../Sketches/";
@@ -173,9 +177,9 @@ public class P5Nitro extends PApplet {
     // if you click on your sketch window when it doesn't have focus,
     // then the mouse coordinates are wrong.
     if (!frame.isFocused()) {
-        OKToConsiderClicks = false;
+      OKToConsiderClicks = false;
     }
-    
+
     background(outerBackgroundColor);
     // Currently the whole of the text area is repainted each frame,
     // which is quite wasteful, we'll have to optimize this later on
@@ -390,13 +394,13 @@ public class P5Nitro extends PApplet {
 
   void mousePressed() {
     if (OKToConsiderClicks == false) {
-        //System.out.println("rejecting mouse event");
-        // will still don't accept the next one though
-        // until the mouse has actually been moved
-        return;
+      //System.out.println("rejecting mouse event");
+      // will still don't accept the next one though
+      // until the mouse has actually been moved
+      return;
     }
 
-    
+
     //System.out.println("mouseX:"+mouseX);
     //System.out.println("mouseY:"+mouseY);
 
@@ -423,3 +427,4 @@ public class P5Nitro extends PApplet {
     theTextArea.mousePressed(mouseX, mouseY);
   }
 }
+

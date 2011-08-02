@@ -245,7 +245,9 @@ endifFlash*/
 			endifOpenGL*/
 			
 			/*ifFlash
+			//ifNekoStartComment
 			bitmapData.fillRect(new Rectangle(0, 0, Std.int(width), Std.int(height)), curBackground);
+			//ifNekoEndComment
 			endifFlash*/
 		}
 
@@ -263,7 +265,9 @@ endifFlash*/
 			endifOpenGL*/
 			
 			/*ifFlash
+			//ifNekoStartComment
 			bitmapData.fillRect(new Rectangle(0, 0, Std.int(width), Std.int(height)), curBackground);
+			//ifNekoEndComment
 			endifFlash*/
 		}
 
@@ -274,7 +278,9 @@ endifFlash*/
 			endifOpenGL*/
 			
 			/*ifFlash
+			//ifNekoStartComment
 			bitmapData.fillRect(new Rectangle(0, 0, Std.int(width), Std.int(height)), curBackground);
+			//ifNekoEndComment
 			endifFlash*/
 		}
 
@@ -292,7 +298,9 @@ endifFlash*/
 			endifOpenGL*/
 			
 			/*ifFlash
+			//ifNekoStartComment
 			bitmapData.fillRect(new Rectangle(0, 0, Std.int(width), Std.int(height)), curBackground);
+			//ifNekoEndComment
 			endifFlash*/
 		}
 
@@ -308,7 +316,9 @@ endifFlash*/
 			endifOpenGL*/
 			
 			/*ifFlash
+			//ifNekoStartComment
 			bitmapData.fillRect(new Rectangle(0, 0, Std.int(width), Std.int(height)), curBackground);
+			//ifNekoEndComment
 			endifFlash*/
 		}
 
@@ -543,7 +553,9 @@ endifFlash*/
 		
 		// ok now paint the pGraphics black
 		var rect:Rectangle = new Rectangle(0, 0, w, h);
+		//ifNekoStartComment
 		thepGraphics.bitmapData.fillRect(rect, 0xFF000000);
+		//ifNekoEndComment
 		return thepGraphics;
 	}
 
