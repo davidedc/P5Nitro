@@ -26,13 +26,7 @@ Copyright (C) 2011 by all P5Nitro contributors
 // and for COMMENTEDOUTBECAUSEOFgetPixelAtERROR
 // and for COMMENTEDBECAUSEOFNMEMisalignment
 
-import javax.swing.JFileChooser;
-
 import java.applet.*;
-import java.awt.*;
-import java.awt.image.*;
-import java.awt.event.*;
-import java.util.*;
 import java.io.File;
 
 // this import is to make the window transparent, so you don't see anything
@@ -343,7 +337,7 @@ public class P5Nitro extends PApplet {
 
           String MainFile = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"Main.hx"), this);
           outputFileName = compiledSketchNekoDirectory+"Main.hx"; 
-          MainFile = MainFile.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/");
+          MainFile = MainFile.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/").replaceAll("SKETCHWIDTH", Translator.frameSizeXFromSource+"").replaceAll("SKETCHHEIGHT", Translator.frameSizeYFromSource+"").replaceAll("FRAMERATE", Translator.frameRateFromSource+"");
           FileLoaderAndSaver.saveFile( new File(outputFileName), MainFile, this);
 
           ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchNekoDirectory);
@@ -390,25 +384,25 @@ public class P5Nitro extends PApplet {
   }
 
   void mouseMoved() {
-    System.out.println("mouse moved");
+    //System.out.println("mouse moved");
     OKToConsiderClicks = true;
   }
 
   void mousePressed() {
     if (OKToConsiderClicks == false) {
-        System.out.println("rejecting mouse event");
+        //System.out.println("rejecting mouse event");
         // will still don't accept the next one though
         // until the mouse has actually been moved
         return;
     }
 
     
-    System.out.println("mouseX:"+mouseX);
-    System.out.println("mouseY:"+mouseY);
+    //System.out.println("mouseX:"+mouseX);
+    //System.out.println("mouseY:"+mouseY);
 
     if (P5NitroMode) {    
       if (mouseX > 20 && mouseX < 62 && mouseY > 15 && mouseY < 56) {
-        println("pressed play");
+        //println("pressed play");
 
         //System.out.println(theDataPath);
         //System.out.println(ShellCommandExecutor.runCommand("pwd"));
@@ -421,7 +415,7 @@ public class P5Nitro extends PApplet {
       }
 
       else if (mouseX > 86 && mouseX < 133 && mouseY > 15 && mouseY < 56) {
-        println("pressed stop");
+        //println("pressed stop");
         ShellCommandExecutor.runCommandInDirectory("./killProcessByName.sh P5NitroSketch", theDataPath);
         ShellCommandExecutor.runCommandInDirectory("./killProcessByName.sh neko", theDataPath);
       }

@@ -56,7 +56,7 @@ class Main {
 		//ifNekoEndComment
 
 		setupArgCount0();
-		//ifNekoStartComment //ifNekoEndComment },320,480,60,0xffffff,(1*Lib.HARDWARE) | Lib.RESIZABLE);
+		//ifNekoStartComment //ifNekoEndComment },SKETCHWIDTH,SKETCHHEIGHT,60,0xffffff,(1*Lib.HARDWARE) | Lib.RESIZABLE);
 	}
 	
 
