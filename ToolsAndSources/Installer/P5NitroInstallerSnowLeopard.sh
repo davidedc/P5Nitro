@@ -1,17 +1,15 @@
 cd ~/Downloads
 curl -L https://github.com/davidedc/P5Nitro/zipball/master > P5NitroCheckout.zip
 unzip P5NitroCheckout.zip
+rm P5NitroCheckout.zip
 mv davidedc-P5Nitro-* P5Nitro
 
-haxelib > testToSeeIfHaxelibIsInstalled.txt
+which haxelib > testToSeeIfHaxelibIsInstalled.txt
 
 if [ -s testToSeeIfHaxelibIsInstalled.txt ]
   then
     echo "haxelib is already installed"
-fi
-
-if [ ! -s testToSeeIfHaxelibIsInstalled.txt ]
-  then
+  else
     echo "haxelib has not been installed"
     mkdir P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib
     curl http://nekovm.org/_media/neko-1.8.1-osx.tar.gz > neko.tgz
@@ -33,3 +31,6 @@ if [ ! -s testToSeeIfHaxelibIsInstalled.txt ]
     export LD_LIBRARY_PATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/hxcpp/2,07,0/bin/Mac/
     export LD_LIBRARY_PATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/nme/2,0,1/ndll/Mac/:$LD_LIBRARY_PATH
 fi
+
+rm testToSeeIfHaxelibIsInstalled.txt
+echo Installation complete.
