@@ -9,14 +9,14 @@ if [ -s testToSeeIfHaxelibIsInstalled.txt ]
     export NEKO_INSTALL_PATH=/usr/lib/neko
   else
 	echo "haxelib has been installed as portable"
-    export HAXEPATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/haxe-2.07-osx/
-    export NEKOPATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/neko-1.8.1-osx/
+    export HAXEPATH=$PWD/../../../ToolsAndSources/HaxeNekoAndHaxelib/haxe-2.07-osx/
+    export NEKOPATH=$PWD/../../../ToolsAndSources/HaxeNekoAndHaxelib/neko-1.8.1-osx/
     export PATH=$HAXEPATH:$NEKOPATH:$PATH
-    export DYLD_LIBRARY_PATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/neko-1.8.1-osx/
-    export HXCPP=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/hxcpp/
-    export HAXE_LIBRARY_PATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/haxe-2.07-osx/std/
-    export LD_LIBRARY_PATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/hxcpp/2,07,0/bin/Mac/
-    export LD_LIBRARY_PATH=$HOME/Downloads/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/nme/2,0,1/ndll/Mac/:$LD_LIBRARY_PATH
+    export DYLD_LIBRARY_PATH=$PWD/../../../ToolsAndSources/HaxeNekoAndHaxelib/neko-1.8.1-osx/
+    export HXCPP=$PWD/../../../ToolsAndSources/HaxeNekoAndHaxelib/hxcpp/
+    export HAXE_LIBRARY_PATH=$PWD/../../../ToolsAndSources/HaxeNekoAndHaxelib/haxe-2.07-osx/std/
+    export LD_LIBRARY_PATH=$PWD/../../../ToolsAndSources/HaxeNekoAndHaxelib/hxcpp/2,07,0/bin/Mac/
+    export LD_LIBRARY_PATH=$PWD/../../../ToolsAndSources/HaxeNekoAndHaxelib/nme/2,0,1/ndll/Mac/:$LD_LIBRARY_PATH
 fi
 
 which gcc > testToSeeIfGccIsInstalled.txt
