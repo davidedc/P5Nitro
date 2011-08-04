@@ -157,12 +157,12 @@ public class P5Nitro extends PApplet {
     sourceSketchesDirectory = theDataPath+sourceSketchesDirectoryRelativeToDataPath;
     sourceSketchFromEditorDirectory = sourceSketchesDirectory+"SketchFromP5NitroEditor/";
 
-    outerBackgroundColor = color(255);
+    outerBackgroundColor = color(0);
     // the last boolean is the P5Nitro mode
 
     if (P5NitroMode) {
       size(500, 535);
-      theTextArea = new TextArea(this, 10, 133, 470, 340, color(240, 240, 240), color(20, 20, 20), 15, false, true);
+      theTextArea = new TextArea(this, 10, 133, 470, 340, 0, color(255), 15, false, true);
     }
     else {
       size(1000, 400);

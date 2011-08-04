@@ -73,9 +73,15 @@ class TextArea {
 
   Cursor theNonWrappingCursor;
   Cursor theWrappingCursor;
-  int bgColor = 0;
-  int textColor = 255;
+  int bgColor = 255;
+  int textColor = 0;
   boolean controllingTheWrappingCursor = false;
+
+  // at the beginning, we want the cursor to appear dead in the middle
+  // of the screen. So the best way I've found is to just put the cursor in
+  // a specific position until the user enters a character. At that point
+  // we resume cursor position using the usual positioning calculations
+  boolean noKeyPressedSoFar = true;
 
   public TextArea(P5Nitro parent, int x, int y, int w, int h, int bgColor, int textColor, int fontSize, boolean controllingTheWrappingCursor, boolean P5NitroMode) {
     this( parent, x, y, w, h);
@@ -83,7 +89,7 @@ class TextArea {
     this.bgColor = bgColor;
     this.textColor = textColor;
     this.P5NitroMode = P5NitroMode;
-    font = p.createFont("DejaVu Sans Mono", fontSize);
+    font = p.createFont("MavenPro-Regular.ttf", fontSize);
     lineHeight = fontSize + 2;
     this.controllingTheWrappingCursor = controllingTheWrappingCursor;
   }
@@ -97,7 +103,6 @@ class TextArea {
     height = h;
     font = p.createFont("DejaVu Sans Mono", fontSize);
     lineHeight = fontSize + 2;
-    // add the first empty line
     nonWrappingLinesArrayList.add(new StringBuffer());
     visibleLines = (int)(((float)height / (float)lineHeight) - 1);
     System.out.println(visibleLines);
@@ -119,6 +124,7 @@ class TextArea {
   }
 
   public void keyPressed(char key, int keyCode, boolean controlKeyPressed) {
+
 
     Cursor affectedCursor;  
     if (!controllingTheWrappingCursor) {
@@ -188,6 +194,7 @@ class TextArea {
     } 
     else {
 
+      noKeyPressedSoFar = false;
       // ok here we are adding a character that
       // the user has just typed
       System.out.println("adding a char");
@@ -406,7 +413,18 @@ class TextArea {
       if (theTextWidth > maximumTextWidth) maximumTextWidth = theTextWidth;
     }
     float newScalingFactor = 500/(maximumTextWidth+10);
-    scalingFactor = (float)(0.9*oldScaleFactor + 0.1*newScalingFactor);
+
+    // at the beginning, we want the cursor to appear dead in the middle
+    // of the screen. Also we don't want to animate its position to the middle,
+    // we just want it to appear there. So we want to suspend the animation
+    // until the user enters the first character.
+    if (P5NitroMode && noKeyPressedSoFar) {
+      scalingFactor = newScalingFactor;
+    }
+    else {
+
+      scalingFactor = (float)(0.9*oldScaleFactor + 0.1*newScalingFactor);
+    }
     oldScaleFactor = scalingFactor;
 
     p.fill(textColor);
@@ -425,10 +443,18 @@ class TextArea {
     // draw the non-wrapping cursor
     //////////////////////////////////////////////////////////////////////        
 
-    p.stroke(255, 0, 0, (int)(p.sin((float)(p.frameCount/10.0))*255.0));
+    // the -20 here below is so that when the program starts the cursor is off
+    // see? we pay attention to the details here!
+    p.stroke(255, 0, 0, (int)(p.sin((float)((p.frameCount-20)/10.0))*255.0));
     // p.stroke(textColor);
-    p.line(  theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + 5, theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + lineHeight );
-    //p.line( theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + 5 + yPos,   theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + lineHeight + yPos);
+    if (P5NitroMode && noKeyPressedSoFar) {
+
+      p.line(  5, (float)5.5, 5, (float)12.5 );
+      //p.line( theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + 5 + yPos,   theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + lineHeight + yPos);
+    }
+    else {
+      p.line(  theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + 5, theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + lineHeight );
+    }
 
     allText = "";
     for (int i = 0; i < nonWrappingLinesArrayList.size(); i++) {
