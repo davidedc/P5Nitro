@@ -19,12 +19,17 @@ if [ -s testToSeeIfHaxelibIsInstalled.txt ]
     export LD_LIBRARY_PATH=$PWD/../../../ToolsAndSources/HaxeNekoAndHaxelib/nme/2,0,1/ndll/Mac/:$LD_LIBRARY_PATH
 fi
 
-which gcc > testToSeeIfGccIsInstalled.txt
-if [ -s testToSeeIfGccIsInstalled.txt ]
-  then
-	echo "gcc is installed"
-	haxelib run nme build P5NitroSketch.nmml cpp
-  else
-	echo "gcc is not installed"
+# always use neko
+# in theory compilation via gcc is supported, but you need both the latest svn version of haxe
+# and gcc
+# so for the time being we comment this piece out
+
+#which gcc > testToSeeIfGccIsInstalled.txt
+#if [ -s testToSeeIfGccIsInstalled.txt ]
+#  then
+#	echo "gcc is installed"
+#	haxelib run nme build P5NitroSketch.nmml cpp
+#  else
+#	echo "gcc is not installed"
 	haxe -main Main -neko P5NitroSketch.n -lib nme -lib hxcpp --remap flash:nme
-fi
+#fi

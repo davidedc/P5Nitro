@@ -94,15 +94,15 @@ public class P5Nitro extends PApplet {
   // See the "How to export P5Nitro as an app" document
   // in the Docs directory for more info.
 
-/*
+  /*
   public static void main(String args[]) {
-    runningAsApp = true;
-    PApplet.main(new String[] {  
-      "P5Nitro"
-    }
-    );
-  }
-*/
+   runningAsApp = true;
+   PApplet.main(new String[] {  
+   "P5Nitro"
+   }
+   );
+   }
+   */
 
   // this is to make the window transparent so that the user is not confused
   // by an empty window that does nothing.
@@ -319,54 +319,61 @@ public class P5Nitro extends PApplet {
         println("chmodding the build binaries script");
         ShellCommandExecutor.runCommandInDirectory("chmod 777 buildTheBinaries.sh", compiledSketchAppDirectory);
 
+        // in theory compilation via gcc is supported, but you need both the latest svn version of haxe
+        // and gcc
+        // so for the time being we comment this piece out
+        //if (ShellCommandExecutor.runCommandInDirectory("which gcc", theDataPath).length() == 0) {
+        println("launching the neko bytecode generator" );  
 
-        if (ShellCommandExecutor.runCommandInDirectory("which gcc", theDataPath).length() == 0) {
-          println("launching the neko bytecode generator" );  
+        String PGraphicsTemplate = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"PGraphics.hx"), this);
+        String outputFileName = compiledSketchNekoDirectory+"PGraphics.hx"; 
+        PGraphicsTemplate = PGraphicsTemplate.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/");
+        FileLoaderAndSaver.saveFile( new File(outputFileName), PGraphicsTemplate, this);
 
-          String PGraphicsTemplate = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"PGraphics.hx"), this);
-          String outputFileName = compiledSketchNekoDirectory+"PGraphics.hx"; 
-          PGraphicsTemplate = PGraphicsTemplate.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/");
-          FileLoaderAndSaver.saveFile( new File(outputFileName), PGraphicsTemplate, this);
+        String PGraphicsRootTemplate = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"PGraphicsRoot.hx"), this);
+        outputFileName = compiledSketchNekoDirectory+"PGraphicsRoot.hx";
+        // note that we have to handle the case of two nested multiline comments! 
+        PGraphicsRootTemplate = PGraphicsRootTemplate.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/").replaceAll("/\\*ifFlash\\s*/\\*nekoStartComment", "/*").replaceAll("nekoEndComment\\*/\\s*endifFlash\\*/", "*/");
+        FileLoaderAndSaver.saveFile( new File(outputFileName), PGraphicsRootTemplate, this);
 
-          String PGraphicsRootTemplate = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"PGraphicsRoot.hx"), this);
-          outputFileName = compiledSketchNekoDirectory+"PGraphicsRoot.hx";
-          // note that we have to handle the case of two nested multiline comments! 
-          PGraphicsRootTemplate = PGraphicsRootTemplate.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/").replaceAll("/\\*ifFlash\\s*/\\*nekoStartComment", "/*").replaceAll("nekoEndComment\\*/\\s*endifFlash\\*/", "*/");
-          FileLoaderAndSaver.saveFile( new File(outputFileName), PGraphicsRootTemplate, this);
+        String PImageTemplate = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"PImage.hx"), this);
+        outputFileName = compiledSketchNekoDirectory+"PImage.hx"; 
+        PImageTemplate = PImageTemplate.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/");
+        FileLoaderAndSaver.saveFile( new File(outputFileName), PImageTemplate, this);
 
-          String PImageTemplate = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"PImage.hx"), this);
-          outputFileName = compiledSketchNekoDirectory+"PImage.hx"; 
-          PImageTemplate = PImageTemplate.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/");
-          FileLoaderAndSaver.saveFile( new File(outputFileName), PImageTemplate, this);
+        String MainFile = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"Main.hx"), this);
+        outputFileName = compiledSketchNekoDirectory+"Main.hx"; 
+        MainFile = MainFile.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/").replaceAll("SKETCHWIDTH", Translator.frameSizeXFromSource+"").replaceAll("SKETCHHEIGHT", Translator.frameSizeYFromSource+"").replaceAll("FRAMERATE", Translator.frameRateFromSource+"");
+        FileLoaderAndSaver.saveFile( new File(outputFileName), MainFile, this);
 
-          String MainFile = FileLoaderAndSaver.loadFile(new File(compiledSketchNekoDirectory+"Main.hx"), this);
-          outputFileName = compiledSketchNekoDirectory+"Main.hx"; 
-          MainFile = MainFile.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/").replaceAll("SKETCHWIDTH", Translator.frameSizeXFromSource+"").replaceAll("SKETCHHEIGHT", Translator.frameSizeYFromSource+"").replaceAll("FRAMERATE", Translator.frameRateFromSource+"");
-          FileLoaderAndSaver.saveFile( new File(outputFileName), MainFile, this);
+        ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchNekoDirectory);
+        println("chmodding the build binaries script");
+        ShellCommandExecutor.runCommandInDirectory("chmod 777 launchNekoVM.sh", compiledSketchNekoDirectory);
+        println("launching the neko vm" );  
+        OKToConsiderClicks = false;
+        //ShellCommandExecutor.runCommandInDirectory("sh launchNekoVM.sh &", compiledSketchNekoDirectory);
 
-          ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchNekoDirectory);
-          println("chmodding the build binaries script");
-          ShellCommandExecutor.runCommandInDirectory("chmod 777 launchNekoVM.sh", compiledSketchNekoDirectory);
-          println("launching the neko vm" );  
-          OKToConsiderClicks = false;
-          //ShellCommandExecutor.runCommandInDirectory("sh launchNekoVM.sh &", compiledSketchNekoDirectory);
-
-          // if you don't attach a stream to your exec, then it runs in the background
-          try {  
-            File theDirectory = new File(compiledSketchNekoDirectory);
-            Process p = Runtime.getRuntime().exec("./launchNekoVM.sh", null, theDirectory);
-          } 
-          catch (IOException e) {  
-            e.printStackTrace();
-          }
+        // if you don't attach a stream to your exec, then it runs in the background
+        try {  
+          File theDirectory = new File(compiledSketchNekoDirectory);
+          Process p = Runtime.getRuntime().exec("./launchNekoVM.sh", null, theDirectory);
+        } 
+        catch (IOException e) {  
+          e.printStackTrace();
         }
+        // this commented piece below is to support the compilation.
+        // I comment this out because you need both the latest svn version of haxe
+        // and also gcc
+        //}
+        /*
         else {
-          println("launching the binary generator" );  
-          ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchAppDirectory);
-          print("opening the app");
-          ShellCommandExecutor.runCommandInDirectory("open P5NitroSketch.app", compiledSketchAppDirectory + "/bin/cpp/Mac");
-          OKToConsiderClicks = false;
-        }
+         println("launching the binary generator" );  
+         ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchAppDirectory);
+         print("opening the app");
+         ShellCommandExecutor.runCommandInDirectory("open P5NitroSketch.app", compiledSketchAppDirectory + "/bin/cpp/Mac");
+         OKToConsiderClicks = false;
+         }
+         */
       }
     }
   }
