@@ -1,3 +1,4 @@
+# the linux version replaces curl with wget and also adds a LD_LIBRARY_PATH environment variable
 wget -O P5NitroCheckout.zip https://github.com/davidedc/P5Nitro/zipball/master
 unzip P5NitroCheckout.zip
 rm P5NitroCheckout.zip
@@ -22,6 +23,7 @@ if [ -s testToSeeIfHaxelibIsInstalled.txt ]
     export NEKOPATH=$PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/neko-1.8.1-linux/
     export PATH=$HAXEPATH:$NEKOPATH:$PATH
     export DYLD_LIBRARY_PATH=$PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/neko-1.8.1-linux/
+    export LD_LIBRARY_PATH=$DYLD_LIBRARY_PATH # this is linux-specific
     haxelib setup $PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/
     haxelib install hxcpp
     haxelib install nme
