@@ -19,8 +19,8 @@ if [ -s testToSeeIfHaxelibIsInstalled.txt ]
     tar -zxvf neko.tgz -C $PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/
     rm neko.tgz
 
-    tar -zxvf haxe.tgz -C $PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/
     wget -O haxe.tgz http://haxe.org/file/haxe-2.07-linux.tar.gz
+    tar -zxvf haxe.tgz -C $PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/
     rm haxe.tgz
 
     export HAXEPATH=$PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/haxe-2.07-linux/
