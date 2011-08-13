@@ -29,8 +29,8 @@ if [ -s testToSeeIfHaxelibIsInstalled.txt ]
     haxelib install nme
     export HXCPP=$PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/hxcpp/
     export HAXE_LIBRARY_PATH=$PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/haxe-2.07-linux/std/
-    export LD_LIBRARY_PATH=$PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/hxcpp/2,07,0/bin/Mac/
-    export LD_LIBRARY_PATH=$PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/nme/2,0,1/ndll/Mac/:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=$PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/hxcpp/2,07,0/bin/Linux/:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=$PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib/nme/2,0,1/ndll/Linux/:$LD_LIBRARY_PATH
 fi
 
 rm testToSeeIfHaxelibIsInstalled.txt
