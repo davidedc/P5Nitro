@@ -309,6 +309,7 @@ public class P5Nitro extends PApplet {
         DirectoryCopier.copyDirectory(new File(compiledSketchTranslatedToHaxeDirectory), new File(compiledSketchNekoDirectory) );
         println("chmodding the build binaries script");
         ShellCommandExecutor.runCommandInDirectory("chmod 777 buildTheBinaries.sh", compiledSketchNekoDirectory);
+        ShellCommandExecutor.runCommandInDirectory("chmod 777 buildTheBinariesLinux.sh", compiledSketchNekoDirectory);
 
         println("creating bin directory");
         ShellCommandExecutor.runCommandInDirectory("mkdir bin", compiledSketchAppDirectory);
@@ -346,9 +347,15 @@ public class P5Nitro extends PApplet {
         MainFile = MainFile.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/").replaceAll("SKETCHWIDTH", Translator.frameSizeXFromSource+"").replaceAll("SKETCHHEIGHT", Translator.frameSizeYFromSource+"").replaceAll("FRAMERATE", Translator.frameRateFromSource+"");
         FileLoaderAndSaver.saveFile( new File(outputFileName), MainFile, this);
 
-        ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchNekoDirectory);
+        if (System.getProperty("os.name").toLowerCase().indexOf("mac") != -1)
+          ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchNekoDirectory);
+        else if (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1)
+          ShellCommandExecutor.runCommandInDirectory("./buildTheBinariesLinux.sh", compiledSketchNekoDirectory);
+
         println("chmodding the build binaries script");
         ShellCommandExecutor.runCommandInDirectory("chmod 777 launchNekoVM.sh", compiledSketchNekoDirectory);
+        ShellCommandExecutor.runCommandInDirectory("chmod 777 launchNekoVMLinux.sh", compiledSketchNekoDirectory);
+
         println("launching the neko vm" );  
         OKToConsiderClicks = false;
         //ShellCommandExecutor.runCommandInDirectory("sh launchNekoVM.sh &", compiledSketchNekoDirectory);
@@ -356,7 +363,11 @@ public class P5Nitro extends PApplet {
         // if you don't attach a stream to your exec, then it runs in the background
         try {  
           File theDirectory = new File(compiledSketchNekoDirectory);
-          Process p = Runtime.getRuntime().exec("./launchNekoVM.sh", null, theDirectory);
+          Process p;
+          if (System.getProperty("os.name").toLowerCase().indexOf("mac") != -1)
+            p = Runtime.getRuntime().exec("./launchNekoVM.sh", null, theDirectory);
+          else if (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1)
+            p = Runtime.getRuntime().exec("./launchNekoVMLinux.sh", null, theDirectory);
         } 
         catch (IOException e) {  
           e.printStackTrace();
