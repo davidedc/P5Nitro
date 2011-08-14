@@ -4,6 +4,8 @@ How to install and run P5Nitro - OSX
 
 If you use your setup for work and feel more comfortable running things in a sandboxed guest session, just open a Guest Session. To enable Guest Sessions on OSX, just follow [these steps](http://docs.info.apple.com/article.html?path=Mac/10.5/en/15600.html).
 
+Hint: it's a checkbox in the "Accounts" panel in the System preferences:
+
 ![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture.PNG)
 
 ...and then logout and click on "Guest" on the login window:
