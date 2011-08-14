@@ -3,7 +3,9 @@ How to install and run P5Nitro - Linux
 
 If you use your setup for work and feel more comfortable running things in a sandboxed guest session, just open a Guest Session:
 
+<center>
 ![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.34.44.png)
+</center>
 
 OK now open a terminal:
 
