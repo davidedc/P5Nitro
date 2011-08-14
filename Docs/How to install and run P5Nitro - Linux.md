@@ -17,9 +17,13 @@ Now type (or copy/paste) the command below. Note that "O" in "-O" is a capital "
 
 like so:
 
+![Install command](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.39.30.png)
+
+this script takes a minute or so. Let it finish (it says "Installation complete"), and then open the home folder (if you picked another location for the install, browse to that location instead):
+
 ![Open the home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.42.52.png)
 
-this script takes a minute or so. Let it finish (it says "Installation complete"), and then open the home folder (if you picked another location for the install, browse to that location instead). A new folder called P5Nitro is visible. Open it, and then open the application.linux folder inside it
+A new folder called P5Nitro is visible. Open it, and then open the application.linux folder inside it
 
 ![Contents of home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.43.21.png)
 ![Contents of application.linux folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.43.42.png)

@@ -23,17 +23,17 @@ Now type (or copy/paste) the command below.
 
 like so:
 
-
-this script takes a minute or so. Let it finish (it says "Installation complete"), and then open the home folder (if you picked another location for the install, browse to that location instead):
-
 ![Open the home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture5.PNG)
 
-A new folder called P5Nitro is visible. Open it, and then open the P5Nitro.app folder inside it
+this script takes a minute or so. Let it finish (it says "Installation complete"), and then open the home folder (if you picked another location for the install, browse to that location instead). A new folder called P5Nitro is visible.
 
 ![Contents of home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture6.PNG)
+
+Now, finally, launch the P5Nitro script by double-clicking it.
+
 ![Contents of P5Nitro.app folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture7.PNG)
 
-Now, finally, launch the P5Nitro script by double-clicking it. The P5Nitro window will show-up - type some simple Processing code:
+The P5Nitro window will show-up - type some simple Processing code:
 
 ![Click on P5Nitro app](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture8.PNG)
 
