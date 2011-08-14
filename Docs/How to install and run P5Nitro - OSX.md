@@ -6,7 +6,8 @@ If you use your setup for work and feel more comfortable running things in a san
 
 ![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture.PNG)
 
-click on "Guest" on the login window.
+click on "Guest" on the login window
+
 ![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture2.PNG)
 
 OK now open a terminal:
@@ -16,7 +17,7 @@ OK now open a terminal:
 
 You can go to any directory where you have write access. The home directory is used here, which is normally where the terminal opens.
 
-And type (or copy/paste) the command below.
+Now type (or copy/paste) the command below.
 
 	curl https://raw.github.com/davidedc/P5Nitro/master/ToolsAndSources/Installer/P5NitroInstallerSnowLeopard.sh | sh
 
