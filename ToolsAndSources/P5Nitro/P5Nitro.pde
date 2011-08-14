@@ -141,9 +141,16 @@ public class P5Nitro extends PApplet {
     else {
       // if you are running P5Nitro as an app rather than from Processing,
       // then the relative position of the directories changes a bit.
+      // Also the relative positions of the directories change in osx and linux
       System.out.println(" running as app");
       System.out.println(" current data directory: " + theDataPath);
+
+        if (System.getProperty("os.name").toLowerCase().indexOf("mac") != -1)
       theDataPath = new File(theDataPath).getParent() + "/"+nameOfTheOSXApp + "/Contents/Resources/data/";
+        else if (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1)
+      theDataPath = new File(theDataPath).getParent() + "/Contents/Resources/data/";
+
+
       System.out.println(" redefining data directory to be: " + theDataPath);
       compiledSketchesDirectoryRelativeToDataPath = "/../../../../CompiledSketches/";
       sourceSketchesDirectoryRelativeToDataPath = "../../../../Sketches/";
