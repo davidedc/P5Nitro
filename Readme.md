@@ -9,7 +9,7 @@ P5Nitro lets you create small processing sketches and put them on your phone.
 How to use it
 ----------------
   - You can install P5Nitro in a guest login in both OSX and Linux
-  - Open a terminal and run one command, as shown [here](https://github.com/davidedc/P5Nitro/blob/master/Docs/How%20to%20install%20P5Nitro.md) inline link.
+  - Open a terminal and run one command, as shown [here](https://github.com/davidedc/P5Nitro/blob/master/Docs/How%20to%20install%20P5Nitro.md).
   - This will create a P5Nitro folder
   - If you are on osx, launch the P5Nitro.app, f you are on linux, launch the P5Nitro script inside the application.linux folder
   - Type a simple Processing program
