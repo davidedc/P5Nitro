@@ -2,14 +2,17 @@ How to install P5Nitro - OSX
 ======================
 
 
-If you use your setup for work and feel more comfortable running things in a sandboxed guest session, just open a Guest Session:
+If you use your setup for work and feel more comfortable running things in a sandboxed guest session, just open a Guest Session. To enable Guest Sessions on OSX, just follow [these steps](http://docs.info.apple.com/article.html?path=Mac/10.5/en/15600.html).
 
 ![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture.PNG)
+
+click on "Guest" on the login window.
 ![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture2.PNG)
 
 OK now open a terminal:
 
 ![Open a terminal](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture3.PNG)
+![Empty terminal](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture4.PNG)
 
 You can go to any directory where you have write access. The home directory is used here, which is normally where the terminal opens.
 
@@ -19,7 +22,6 @@ And type (or copy/paste) the command below.
 
 like so:
 
-![Install command](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture4.PNG)
 
 this script takes a minute or so. Let it finish (it says "Installation complete"), and then open the home folder (if you picked another location for the install, browse to that location instead):
 
