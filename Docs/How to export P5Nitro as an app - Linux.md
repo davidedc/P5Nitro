@@ -17,7 +17,7 @@ So here is how to do it.
       /P5Nitro/ToolsAndSources/P5Nitro/application.linux/
 * Copy that folder and put it inside the top P5Nitro folder
 * Inside that folder there is a P5Nitro file, which is just a shell script: change the reference to "java" into "../ToolsAndSources/processing-1.5.1/java/bin/java"
-* Create a place to hold the data foldes in:
+* Create a place to hold the data folder in:
 
       /P5Nitro/application.linux/Contents/Resources
 * Copy in here the "data" directory of the P5Nitro sketch
@@ -26,7 +26,9 @@ So here is how to do it.
 
       /P5Nitro/application.linux/lib/
 
-* This directory should contain two jar files. Rename P5Nitro.jar to P5Nitro.zip
+* This directory should contain two jar files.
+* If the mac app is up to date, then you can copy the P5Nitro.jar file from there and put it in place of the one in this directory. In this case, there is nothing more to do and you can skip any remaining steps of this guide.
+* Rename P5Nitro.jar to P5Nitro.zip
 and unpack it in place (you can double-click it in Finder)
 * in the unpacked folder, (which should be named P5Nitro), delete all the contents of the data folder apart from the font file
 * Now with the terminal go to:
