@@ -11,11 +11,11 @@ So here is how to do it.
 * In the sketch, in P5Nitro.pde, uncomment the main method. Note that P5Nitro changes the relative positions of the input/output folders when it's ran as an application, because it's ran in a different point in the directory structure.
 * In processing, use "Export Application"
 * Check the Mac version
+* Put back the comments around the main method
 * Ok now you should have an app in a place like:
 
       /P5Nitro/ToolsAndSources/P5Nitro/application.macosx/
 * Copy the .app from that folder and put it inside the top P5Nitro folder
-* Rename P5Nitro.app into P5Nitro.app
 * so now the app should be in:
 
       /P5Nitro/P5Nitro.app
@@ -28,9 +28,10 @@ into the inside of the app. Go into:
 
       /P5Nitro/P5Nitro.app/Contents/Resources/Java/
 
-* This directory should contain two jar files. Rename P5Nitro.jar to P5Nitro.zip
-and unpack it in place (you can double-click it in Finder)
-* in the unpacked folder, (which should be named P5Nitro), delete the data folder
+* This directory should contain two jar files.
+* If the linux version of the app is up to date, you can take the P5Nitro.jar file from there and put it in place of this one in the mac app - then you are done - no need to continue with the other steps of this guide
+* Rename P5Nitro.jar to P5Nitro.zip and unpack it in place (you can double-click it in Finder)
+* in the unpacked folder, (which should be named P5Nitro), delete all the contents of the data folder except the font file
 * Now with the terminal go to:
 
       whereverYouPutP5Nitro/P5Nitro/P5Nitro.app/Contents/Resources/Java/P5Nitro

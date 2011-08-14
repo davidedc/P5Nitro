@@ -11,6 +11,7 @@ So here is how to do it.
 * In the sketch, in P5Nitro.pde, uncomment the main method. Note that P5Nitro changes the relative positions of the input/output folders when it's ran as an application, because it's ran in a different point in the directory structure.
 * In processing, use "Export Application"
 * Check the Linux version
+* Put back the comments around the main method
 * Ok now you should have an app in a place like:
 
       /P5Nitro/ToolsAndSources/P5Nitro/application.linux/
