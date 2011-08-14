@@ -31,7 +31,7 @@ this script takes a minute or so. Let it finish (it says "Installation complete"
 
 ![Contents of home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture6.PNG)
 
-Now, finally, launch the P5Nitro script by double-clicking it.
+Now, finally, launch P5Nitro by double-clicking the P5Nitro icon.
 
 ![Contents of P5Nitro.app folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture7.PNG)
 
