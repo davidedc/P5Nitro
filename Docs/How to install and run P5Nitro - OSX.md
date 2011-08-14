@@ -6,7 +6,7 @@ If you use your setup for work and feel more comfortable running things in a san
 
 ![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture.PNG)
 
-click on "Guest" on the login window
+...and then logout and click on "Guest" on the login window:
 
 ![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture2.PNG)
 
