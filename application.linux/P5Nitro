@@ -1,0 +1,4 @@
+#!/bin/sh
+
+APPDIR=$(dirname "$0")
+../ToolsAndSources/processing-1.5.1/java/bin/java  -Djava.library.path="$APPDIR" -cp "$APPDIR/lib/P5Nitro.jar:$APPDIR/lib/core.jar" P5Nitro
