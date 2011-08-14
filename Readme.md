@@ -36,6 +36,7 @@ The bare truth
 
 **Notable missing features**
 
+  - The editor doesn't support multiple files, selection, loading, saving, and copying. You can paste by using CTRL-V though (also in OSX, which would normally use the command key)
   - 3D primitives
   - multitouch
   - accelerometer
@@ -43,7 +44,7 @@ The bare truth
 
 How does it work
 ----------------
-P5Nitro translates your sketches into Haxe source files. The haxe compiler then translates the haxe files into c++. Your favorite compiler then creates native code.
+P5Nitro translates your sketches into Haxe source files. The haxe compiler then translates the haxe files into VM bytecode (called Neko) and c++. Your favorite compiler then creates native code.
 
 Current state of affairs
 ------------------------
