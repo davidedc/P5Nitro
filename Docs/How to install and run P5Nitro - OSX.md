@@ -4,12 +4,12 @@ How to install P5Nitro - OSX
 
 If you use your setup for work and feel more comfortable running things in a sandboxed guest session, just open a Guest Session:
 
-![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.34.44.png)
-![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.34.44.png)
+![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture.PNG)
+![Choose Guest Session](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture2.PNG)
 
 OK now open a terminal:
 
-![Open a terminal](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.35.35.png)
+![Open a terminal](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture3.PNG)
 
 You can go to any directory where you have write access. The home directory is used here, which is normally where the terminal opens.
 
@@ -19,27 +19,22 @@ And type (or copy/paste) the command below.
 
 like so:
 
-![Install command](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.39.30.png)
+![Install command](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture4.PNG)
 
 this script takes a minute or so. Let it finish (it says "Installation complete"), and then open the home folder (if you picked another location for the install, browse to that location instead):
 
-![Open the home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.42.52.png)
+![Open the home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture5.PNG)
 
-A new folder called P5Nitro is visible. Open it, and then open the application.linux folder inside it
+A new folder called P5Nitro is visible. Open it, and then open the P5Nitro.app folder inside it
 
-![Contents of home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.43.21.png)
-![Contents of application.linux folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.43.42.png)
+![Contents of home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture6.PNG)
+![Contents of P5Nitro.app folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture7.PNG)
 
-Now, finally, launch the P5Nitro script by double-clicking it - click "Run" when prompted:
+Now, finally, launch the P5Nitro script by double-clicking it. The P5Nitro window will show-up - type some simple Processing code:
 
-![Click on P5Nitro app](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.44.16.png)
-![Confirm to run](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.44.31.png)
-
-The P5Nitro window will show-up - type some simple Processing code:
-
-![Open the home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.45.30.png)
+![Click on P5Nitro app](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture8.PNG)
 
 and then click the play button. The sketch will appear.
 
-![Open the home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20linux%20installation/Screen%20shot%202011-08-14%20at%2013.45.59.png)
+![Open the home folder](https://github.com/davidedc/P5Nitro/raw/master/Docs/Screenshots%20of%20osx%20installation/Capture9.PNG)
 	
