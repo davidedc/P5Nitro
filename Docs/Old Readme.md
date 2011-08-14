@@ -1,21 +1,26 @@
-P5Nitro
-=======
+P5Nitro - old readme file
+=========================
+
+Why is this old readme file here?
+---------------------------------
+P5Nitro's features have been shrunk in order to make it a bit more fun. Those features will make it back in the project one day, so hopefully this file will be useful again.
+
 
 Overview
 --------
 
-P5Nitro lets you create small processing sketches and put them on your phone.
+P5Nitro turns your processing sketches into native code.
 
 How to use it
 ----------------
-  - You can install P5Nitro in a guest login in both OSX and Linux
-  - Open a terminal and run one command, as shown [here](https://github.com/davidedc/P5Nitro/blob/master/Docs/How%20to%20install%20P5Nitro.md) inline link.
-  - This will create a P5Nitro folder
-  - If you are on osx, launch the P5Nitro.app, f you are on linux, launch the P5Nitro script inside the application.linux folder
-  - Type a simple Processing program
-  - Hit the play button - the sketch should show up on the screen
-  - The translated sketch is inside the CompiledSketches folder
-  - Open the XCode project with XCode and deploy if you want
+For using P5Nitro, three things are needed: Processing, Haxe and the nekonme library. For deploying on iOS, XCode is also needed. The general workflow looks as follows:
+
+  - Make a sketch using Processing. Some examples are in P5Nitro / data / inputFilesForTranslatorFolder
+  - When done, put the sketch in P5Nitro / data / inputFilesForTranslatorFolder
+  - Open P5Nitro.pde in Processing and tweak the paragraph that selects which sketch to translate
+  - Hit the play button
+  - The translated sketch and ready-made XCode project are now in the data folder of the sketch
+  - Open the XCode project with XCode and deploy
 
 It's also possible to make executables that work on windows/linux/osx and flash - manuals for those cases still have to be written.
 
@@ -23,6 +28,7 @@ The bare truth
 --------------
 **Advantages**
 
+  - faster than Java
   - works on platforms where using a JVM is impractical (e.g. iOS)
 
 **Disadvantages**
@@ -31,10 +37,14 @@ The bare truth
 
 **Working features**
 
+  - sound and music via Minim
+  - text (via custom API)
+  - network (some)
   - basic 2D primitives
+  - loading and writing files (some)
   - mouse (one finger) input
 
-**Notable missing features**
+**Missing features**
 
   - 3D primitives
   - multitouch
