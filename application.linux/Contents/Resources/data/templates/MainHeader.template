@@ -1,0 +1,174 @@
+////////// start of MainHeader template
+
+import nme.Lib;
+import nme.events.MouseEvent;
+import nme.events.Event;
+import nme.display.DisplayObject;
+import nme.display.IGraphicsData;
+import nme.display.BitmapData;
+import nme.display.Bitmap;
+import nme.display.GradientType;
+import nme.display.Sprite;
+import nme.display.StageDisplayState;
+import nme.display.StageQuality;
+import nme.display.StageQuality;
+import nme.geom.Matrix;
+import nme.geom.Rectangle;
+import nme.geom.Point;
+import nme.Timer;
+
+class Main {
+	
+	public static function main() {
+		//ifNekoStartComment //ifNekoEndComment Lib.create(function(){
+		g = new PGraphicsRoot();
+		//trace("entering the new function");
+		
+
+		
+		/*ifOpenGL
+			// g is a PGraphics object and will
+			// proceed to add shapes as requested
+			// by the processing program
+			Lib.current.addChild(g);
+		endifOpenGL*/
+		
+		/*ifFlash
+			Lib.current.addChild(g);
+		endifFlash*/
+		
+		Lib.stage.frameRate = 60;
+		flash.Lib.current.addEventListener(Event.ENTER_FRAME,wholeDrawCycle);
+		flash.Lib.current.addEventListener(nme.events.MouseEvent.MOUSE_UP, mouseUpCatcherFunction);
+		flash.Lib.current.addEventListener(nme.events.MouseEvent.MOUSE_DOWN, mouseDownCatcherFunction);
+		flash.Lib.current.addEventListener(nme.events.MouseEvent.MOUSE_MOVE, mouseMoveCatcherFunction);
+		flash.Lib.current.addEventListener(nme.events.MouseEvent.CLICK, mouseClickCatcherFunction);
+
+		//ifNekoStartComment
+		Lib.stage.quality = nme.display.StageQuality.LOW;
+		//ifNekoEndComment
+		//Lib.stage.quality = nme.display.StageQuality.BEST;
+		//Lib.stage.quality = nme.display.StageQuality.HIGH;
+		
+		millisecondsWhenSketchStarted = Std.int(nme.Timer.stamp()*1000);
+		//ifNekoStartComment
+		HighDpiScreenManager.dpiScaleFactor = Lib.stage.dpiScale;
+		//ifNekoEndComment
+
+		setupArgCount0();
+		//ifNekoStartComment //ifNekoEndComment },SKETCHWIDTH,SKETCHHEIGHT,60,0xffffff,(1*Lib.HARDWARE) | Lib.RESIZABLE);
+	}
+	
+
+	//public static function tweakStageQuality() {
+	//	referenceToTheOnlyMainObject.stage.quality = nme.display.StageQuality.HIGH;
+	//}
+
+	public static function wholeDrawCycle( event:Event ):Void {
+		startOfDrawMethod();
+		drawArgCount0();
+		endOfDrawMethod();
+	}
+
+	public inline static function startOfDrawMethod() {
+	
+		  // this piece of code makes sure that we keep track of the
+		  // amount of time that the app has been backgrounded.
+		  // Timer.stamp() is based on gettimeofday(), which counts
+		  // seconds since Jan 1 1970
+		  // So, that stamp counts regardless of whether the app
+		  // has been put in background
+		  // so we check whether tha last draw has happened
+		  // more than 2 seconds ago. If yes, then we assume
+		  // that the app has been put in the background
+		  // an we add that background time to a special variable.
+		  // That displacement will be used to get an accurate
+		  // return for the millis() function of Processing,
+		  // which counts the milliseconds since the app has been
+		  // started and working (so, not in the background)
+		  // If we don't do that, everything in the sketch that
+		  // depends on millis() will think that the app was in
+		  // the foreground all the time.
+		  // Think of a game timeout for example - we want the
+		  // background time not to be counted.
+		  
+		  //ifNekoStartComment
+		  var secondsSinceLastDraw:Float;
+		  if (timeStampOfLastDraw == 0) {
+			  timeStampOfLastDraw = Timer.stamp();
+		  }
+		  secondsSinceLastDraw = Timer.stamp() - timeStampOfLastDraw;
+		  if (secondsSinceLastDraw > 2) {
+		  	millisecondsTheAppHasSpentBackgrounded += Std.int(1000*secondsSinceLastDraw - 1000/frameCount);
+		  	//trace("it seems that the app has been backgrounded for this so far: " + millisecondsTheAppHasSpentBackgrounded);
+		  }
+		  timeStampOfLastDraw = Timer.stamp();
+		  //ifNekoEndComment
+
+  		// I tried this to avoid jitter and it actually works fine
+  		// it doesn't slow down the sketch at all and jitter
+  		// is completely gone. Note that this should be turned
+  		// off if you are trying to optimise how you allocate
+  		// memory because it hides some of the build-ups of allocated
+  		// memory.
+  		// nme.system.System.gc();
+
+		/*ifOpenGL
+		  // the image() method of the root pGraphics stores
+		  // a bitmap for each image (say, a letter drawn to screen).
+		  // If a number of images are drawn at each loop, we
+		  // prefer to reuse the Bitmap objects rather than having
+		  // to create new ones every time.
+		  // So we use the bitmapPool pool, and we have to mark
+		  // all entries available again at the beginning of each loop
+	      g.bitmapPool.disposeAllBitmaps();
+		endifOpenGL*/
+		
+		g.beginDrawArgCount0();
+		
+		/*ifOpenGL
+		  // this is necessary because in flash the mouse is only
+		  // tracked within items in the display list.
+		  // In the non-opengl version the whole screen is a bitmap
+		  // and it catches the mouse everywhere, but in
+		  // the OpenGL version if you draw nothing you'd normally
+		  // have an empty display list, so you couldn't check where
+		  // the mouse is.
+		  // This rectangle obviates the problem, so at least there is
+		  // one item in the display list that catches mouse events
+		  // in the whole display area.
+		  // I think there is a more efficient way to put
+		  // an empty rectangle in the display list than to call
+		  // this sequence of processing commands, so this could
+		  // be optimised for sure. [todo]
+		  /*
+		  // this code resets the fill, which shouldn't happen
+		  g.noStrokeArgCount0();
+		  g.fillArgCount2(0,0);
+		  g.rect(0,0,width,height);
+		  g.newShapeNeeded = true;
+		  */
+		  
+		  g.createNewShape();
+		  g.shape.graphics.lineStyle();
+		  g.shape.graphics.beginFill(0, 0);
+		  g.shape.graphics.drawRect(0,0,width,height);
+		  g.shape.graphics.endFill();
+		  //g.newShapeNeeded = true;
+
+		  
+		  
+		endifOpenGL*/
+
+		frameCount++;
+	}
+
+	public inline static function endOfDrawMethod() {
+		// note that in the flash case the function below
+		// also draws the shape one last time to the bitmap
+		// before popping the matrix		
+		g.endDrawArgCount0();
+	}
+	
+	
+////////// end of MainHeader template

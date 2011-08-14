@@ -1,0 +1,92 @@
+// no PImage template for the time being
+
+import nme.Lib;
+import nme.events.MouseEvent;
+import nme.events.Event;
+import nme.display.DisplayObject;
+import nme.display.IGraphicsData;
+import nme.display.BitmapData;
+import nme.display.Bitmap;
+import nme.display.GradientType;
+import nme.display.Sprite;
+import nme.display.StageDisplayState;
+import nme.geom.Matrix;
+import nme.geom.Rectangle;
+import nme.utils.ByteArray;
+
+class PImage extends Bitmap{
+	public var pixels:Array<Int>;
+
+    public function new( x : Int, y : Int ) {
+    	super(null,nme.display.PixelSnapping.AUTO,true);
+    	//trace("creating BitmapData");
+        bitmapData = new BitmapData(x,y);
+    }
+    
+    public function loadPixelsArgCount0() {
+		//ifNekoStartComment
+    	pixels = new Array();
+		bitmapData.lock();
+		var theHeight:Int = Std.int(height);
+		var theWidth:Int = Std.int(width);
+		//var index:Int = 0;
+		//pixels[theHeight * theWidth] = 0;
+		for (y in 0 ... theHeight )
+			for (x in 0 ... theWidth )
+				pixels.push(bitmapData.getPixel32(x, y));
+				//pixels[index++] = bitmapData.getPixel32(x, y);
+		bitmapData.unlock();
+		//ifNekoEndComment
+	}
+
+
+    public function updatePixelsArgCount0() {
+		// map pixel array to bitmapdata
+		// [ddc] this is insanely expensive, check if there is a better way
+		
+		//If you un-comment the commented parts it works but it goes slower.
+		
+			bitmapData.lock();
+			var index:Int = 0;
+			//var index2:Int = 0;
+			var theHeight:Int = Std.int(height);
+			var theWidth:Int = Std.int(width);
+			//var totalLoopLength:Int = theHeight * theHeight;
+
+			//var anotherBitmapData:ByteArray = new ByteArray(theHeight * theWidth * 4);
+
+		    //ifNekoStartComment
+			if (pixels != null) {
+				for (y in 0 ... theHeight )
+					for (x in 0 ... theWidth ){
+					//for (x in 0 ... totalLoopLength ) {
+						bitmapData.setPixel32(x, y, pixels[index++] );
+						
+						//anotherBitmapData.__set(index++,pixels[index2]  & 0xFF);
+						//anotherBitmapData.__set(index++,pixels[index2]  >> 8 & 0xFF);
+						//anotherBitmapData.__set(index++,pixels[index2] >> 16 & 0xFF);
+						//anotherBitmapData.__set(index++,pixels[index2++] >> 24 & 0xFF);
+
+						//anotherBitmapData.writeInt(pixels[x]); // not supported, unfortunately
+					}
+			}
+		    //ifNekoEndComment
+			bitmapData.unlock();
+		//bitmapData.setPixels(new Rectangle(x, y, Std.int(width), Std.int(height)), anotherBitmapData);
+		}
+
+	public function getArgCount2( x:Int, y:Int):Int
+	{
+		    //ifNekoStartComment
+			return bitmapData.getPixel32(x, y);
+		    //ifNekoEndComment return 0;
+	}
+
+	public function setArgCount3( x:Int, y:Int, color:Int ):Void {
+		//ifNekoStartComment
+		//[TODO] should this instantly nullify pixels[] array?
+		bitmapData.setPixel32(x, y, color);
+		//ifNekoEndComment
+	}
+
+}
