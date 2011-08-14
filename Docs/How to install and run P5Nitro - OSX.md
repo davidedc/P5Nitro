@@ -1,4 +1,4 @@
-How to install P5Nitro - OSX
+How to install and run P5Nitro - OSX
 ======================
 
 
