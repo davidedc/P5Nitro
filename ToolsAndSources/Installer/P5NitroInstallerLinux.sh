@@ -1,6 +1,8 @@
 if [ "$(uname -m)" = "x86_64" ] ; then
   echo "Sorry, linux 64 bit is not supported yet"
   exit 1
+  else
+  echo "This is probably a 32 bit - Linux, proceeding"
 fi
 
 # the linux version replaces curl with wget and also adds a LD_LIBRARY_PATH environment variable
@@ -17,7 +19,7 @@ if [ -s testToSeeIfHaxelibIsInstalled.txt ]
   then
     echo "haxelib is already installed"
   else
-    echo "haxelib has not been installed"
+    echo "haxelib is not installed, installing..."
     mkdir $PWD/P5Nitro/ToolsAndSources/HaxeNekoAndHaxelib
 
     wget -O neko.tgz http://nekovm.org/_media/neko-1.8.1-linux.tar.gz
