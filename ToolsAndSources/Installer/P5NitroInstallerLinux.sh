@@ -1,3 +1,9 @@
+MACHINE_TYPE=`uname -m`
+if [ ${MACHINE_TYPE} == 'x86_64' ]; then
+  echo "Sorry, linux 64 bit is not supported yet"
+  exit 1
+fi
+
 # the linux version replaces curl with wget and also adds a LD_LIBRARY_PATH environment variable
 wget -O P5NitroCheckout.zip https://github.com/davidedc/P5Nitro/zipball/master
 unzip P5NitroCheckout.zip
