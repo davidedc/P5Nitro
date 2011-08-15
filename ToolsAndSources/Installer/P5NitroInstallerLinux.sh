@@ -1,5 +1,4 @@
-MACHINE_TYPE=`uname -m`
-if [ ${MACHINE_TYPE} == 'x86_64' ] then
+if [ "$(uname -m)" = "x86_64" ] ; then
   echo "Sorry, linux 64 bit is not supported yet"
   exit 1
 fi
