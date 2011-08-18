@@ -77,12 +77,6 @@ class TextArea {
   int textColor = 0;
   boolean controllingTheWrappingCursor = false;
 
-  // at the beginning, we want the cursor to appear dead in the middle
-  // of the screen. So the best way I've found is to just put the cursor in
-  // a specific position until the user enters a character. At that point
-  // we resume cursor position using the usual positioning calculations
-  boolean noKeyPressedSoFar = true;
-
   public TextArea(P5Nitro parent, int x, int y, int w, int h, int bgColor, int textColor, int fontSize, boolean controllingTheWrappingCursor, boolean P5NitroMode) {
     this( parent, x, y, w, h);
     this.fontSize = fontSize;
@@ -123,7 +117,7 @@ class TextArea {
     }
   }
 
-  public void keyPressed(char key, int keyCode, boolean controlKeyPressed) {
+  public void keyPressed(char key, int keyCode, boolean controlKeyPressed, P5Nitro p5nitroPApplet) {
 
 
     Cursor affectedCursor;  
@@ -181,7 +175,8 @@ class TextArea {
       else if (keyCode == 61) {
         P5Nitro.theTextArea.zoomIn();
       }
-      if (keyCode == 86 ) {
+    } 
+    else  if (keyCode == 86 && key == p5nitroPApplet.PASTECONTROLKEY) {
         //clear();
         System.out.println("pasting: " + getClipboardContents());
         String lines[] = getClipboardContents().split("\\r?\\n");
@@ -189,12 +184,11 @@ class TextArea {
         for (int linNum = 0; linNum < lines.length; linNum++) {
           nonWrappingLinesArrayList.add(new StringBuffer(lines[linNum] ));
         }
+        affectedCursor.moveToTheEnd();
         System.out.println("end pasting");
       }
-    } 
     else {
 
-      noKeyPressedSoFar = false;
       // ok here we are adding a character that
       // the user has just typed
       System.out.println("adding a char");
@@ -340,32 +334,50 @@ class TextArea {
     theNonWrappingCursor.cursorX = 0;
   }
 
-  public void draw(P5Nitro p5nitroPApplet) {
+  public void drawMenuBar(P5Nitro p5nitroPApplet) {
 
-    if (P5NitroMode) {
-      p5nitroPApplet.stroke(0);
-      p5nitroPApplet.fill (41, 40, 41);
-      p5nitroPApplet.rect(0, 0, 500, 70);
 
-      // draw the play button
-      p5nitroPApplet.fill(255);
-      p5nitroPApplet.stroke(255);
-      p5nitroPApplet.smooth();
-      p5nitroPApplet.ellipse(40, 35, 45, 45);
-      p5nitroPApplet.fill(41, 40, 41);
-      p5nitroPApplet.stroke(41, 40, 41);
-      p5nitroPApplet.triangle(35, 25, 50, 35, 35, 45);
+    p5nitroPApplet.resetMatrix();
+    // we do a litle slide-down animation when P5Nitro starts
+    int barAnimationNumberOfFrames = 10;
+    int barAnimationSpeed = 4;
 
-      // draw the stop button
-      p5nitroPApplet.fill(255);
-      p5nitroPApplet.stroke(255);
-      p5nitroPApplet.smooth();
-      p5nitroPApplet.ellipse(110, 35, 45, 45);
-      p5nitroPApplet.fill(41, 40, 41);
-      p5nitroPApplet.stroke(41, 40, 41);
-      p5nitroPApplet.rect(103, 28, 15, 15);
+    if (p5nitroPApplet.frameCount < barAnimationNumberOfFrames) {
+      p5nitroPApplet.pushMatrix();
+      p5nitroPApplet.translate(0, barAnimationSpeed*(p5nitroPApplet.frameCount-barAnimationNumberOfFrames));
     }
 
+    p5nitroPApplet.strokeWeight(1);
+
+    // draws the background rectangle at the top
+    p5nitroPApplet.stroke(0);
+    p5nitroPApplet.fill (41, 40, 41);
+    p5nitroPApplet.rect(0, 0, 500, 70);
+
+    // draw the play button
+    p5nitroPApplet.fill(255);
+    p5nitroPApplet.stroke(255);
+    p5nitroPApplet.smooth();
+    p5nitroPApplet.ellipse(40, 35, 45, 45);
+    p5nitroPApplet.fill(41, 40, 41);
+    p5nitroPApplet.stroke(41, 40, 41);
+    p5nitroPApplet.triangle(35, 25, 50, 35, 35, 45);
+
+    // draw the stop button
+    p5nitroPApplet.fill(255);
+    p5nitroPApplet.stroke(255);
+    p5nitroPApplet.smooth();
+    p5nitroPApplet.ellipse(110, 35, 45, 45);
+    p5nitroPApplet.fill(41, 40, 41);
+    p5nitroPApplet.stroke(41, 40, 41);
+    p5nitroPApplet.rect(103, 28, 15, 15);
+
+    if (p5nitroPApplet.frameCount < barAnimationNumberOfFrames) {
+      p5nitroPApplet.popMatrix();
+    }
+  }
+
+  public void draw(P5Nitro p5nitroPApplet) {
 
     p5nitroPApplet.fill(bgColor);
 
@@ -416,9 +428,8 @@ class TextArea {
 
     // at the beginning, we want the cursor to appear dead in the middle
     // of the screen. Also we don't want to animate its position to the middle,
-    // we just want it to appear there. So we want to suspend the animation
-    // until the user enters the first character.
-    if (P5NitroMode && noKeyPressedSoFar) {
+    // we just want it to appear there. So we want to suspend the animation.
+    if (p.frameCount == 1) {
       scalingFactor = newScalingFactor;
     }
     else {
@@ -445,15 +456,19 @@ class TextArea {
 
     // the -20 here below is so that when the program starts the cursor is off
     // see? we pay attention to the details here!
-    p.stroke(255, 0, 0, (int)(p.sin((float)((p.frameCount-20)/10.0))*255.0));
-    // p.stroke(textColor);
-    if (P5NitroMode && noKeyPressedSoFar) {
+    if (p.frame.isFocused()) {
 
-      p.line(  5, (float)5.5, 5, (float)12.5 );
-      //p.line( theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + 5 + yPos,   theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + lineHeight + yPos);
-    }
-    else {
-      p.line(  theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + 5, theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + lineHeight );
+      p.stroke(255, 0, 0, (int)(p.sin((float)((p.frameCount-20)/5.0))*255.0));
+      p.strokeWeight(1);
+      // p.stroke(textColor);
+      if (P5NitroMode && allText.length() == 1) {
+
+        p.line(  5, (float)5.5, 5, (float)12.5 );
+        //p.line( theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + 5 + yPos,   theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + lineHeight + yPos);
+      }
+      else {
+        p.line(  theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + 5, theNonWrappingCursor.cursorX, ((theNonWrappingCursor.cursorLine - firstVisibleLineNumber) * lineHeight) + lineHeight );
+      }
     }
 
     allText = "";
@@ -466,7 +481,10 @@ class TextArea {
     // the wrapping text
     // ***********************************************
 
-    if (P5NitroMode) return;
+    if (P5NitroMode) {
+      drawMenuBar(p5nitroPApplet);
+      return;
+    }
 
     //////////////////////////////////////////////////////////////////////
     // wrap the text

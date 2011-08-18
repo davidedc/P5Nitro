@@ -124,6 +124,13 @@ public class Cursor {
     }
   }
 
+  public void moveToTheEnd() {
+    
+    cursorLine = textArea.nonWrappingLinesArrayList.size() - 1;    
+    cursorChar = textArea.currentLine().length();
+    
+  }
+
 
   public void updateCursorPosition() {
     String stringBeforeCaret = (new String((StringBuffer)textArea.nonWrappingLinesArrayList.get(cursorLine))).substring(0,cursorChar);

@@ -34,24 +34,24 @@ import java.io.File;
 // but I couldn't manage.
 // import com.sun.awt.AWTUtilities;
 
-public class P5Nitro extends PApplet {
-  // These are shortcuts for building a number of paths later on.
-  // Ideally I'd like to initialise these string here but I can't,
-  // because datapath("") doesn't return the right value (i.e the
-  // path of the data directory of the sketch) if placed here, for
-  // some reason. So I prefer to initialise them all later
-  // in the setup method.
-  String compiledSketchesDirectoryRelativeToDataPath;
-  String compiledSketchesDirectory;
-  String templatesDirectory;
-  String compiledSketchFromEditorDirectory;
-  String theDataPath;
-  String compiledSketchAppDirectory;
-  String compiledSketchNekoDirectory;
-  String sourceSketchesDirectoryRelativeToDataPath;
-  String sourceSketchesDirectory;
-  String sourceSketchFromEditorDirectory;
-  String nameOfTheOSXApp;
+  public class P5Nitro extends PApplet {
+    // These are shortcuts for building a number of paths later on.
+    // Ideally I'd like to initialise these string here but I can't,
+    // because datapath("") doesn't return the right value (i.e the
+    // path of the data directory of the sketch) if placed here, for
+    // some reason. So I prefer to initialise them all later
+    // in the setup method.
+    String compiledSketchesDirectoryRelativeToDataPath;
+    String compiledSketchesDirectory;
+    String templatesDirectory;
+    String compiledSketchFromEditorDirectory;
+    String theDataPath;
+    String compiledSketchAppDirectory;
+    String compiledSketchNekoDirectory;
+    String sourceSketchesDirectoryRelativeToDataPath;
+    String sourceSketchesDirectory;
+    String sourceSketchFromEditorDirectory;
+    String nameOfTheOSXApp;
 
   // These two booleans toggle between two modes: the flash
   // mode and the opengl mode. In the flash mode, we render the
@@ -85,6 +85,8 @@ public class P5Nitro extends PApplet {
   // a mouse move to happen. If there is no mous move, then we
   // discard the next event.
   static boolean OKToConsiderClicks = true;
+
+  int PASTECONTROLKEY = 0;
 
 
   // This main method needs to be added when you use the "Export Application"
@@ -127,6 +129,14 @@ public class P5Nitro extends PApplet {
      AWTUtilities.setWindowOpacity(frame, 0.0f);
      */
 
+    // paste control key is "command" for osx and ios, "control" for everyone else
+    if (PApplet.platform == PApplet.LINUX || PApplet.platform == PApplet.WINDOWS) {
+      PASTECONTROLKEY = 22;
+    }
+    else if (PApplet.platform == PApplet.MACOSX) {
+      PASTECONTROLKEY = 118;
+    }
+
     theDataPath = dataPath("");
     // note that spaces in unix need to be escaped, and since
     // it's a string it needs double escape.
@@ -145,10 +155,10 @@ public class P5Nitro extends PApplet {
       System.out.println(" running as app");
       System.out.println(" current data directory: " + theDataPath);
 
-        if (System.getProperty("os.name").toLowerCase().indexOf("mac") != -1)
-      theDataPath = new File(theDataPath).getParent() + "/"+nameOfTheOSXApp + "/Contents/Resources/data/";
-        else if (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1)
-      theDataPath = new File(theDataPath).getParent() + "/Contents/Resources/data/";
+      if (PApplet.platform == PApplet.MACOSX)
+        theDataPath = new File(theDataPath).getParent() + "/"+nameOfTheOSXApp + "/Contents/Resources/data/";
+      else if (PApplet.platform == PApplet.LINUX)
+        theDataPath = new File(theDataPath).getParent() + "/Contents/Resources/data/";
 
 
       System.out.println(" redefining data directory to be: " + theDataPath);
@@ -183,14 +193,35 @@ public class P5Nitro extends PApplet {
     // This is because of a weir bug in processing where
     // if you click on your sketch window when it doesn't have focus,
     // then the mouse coordinates are wrong.
-    if (!frame.isFocused()) {
-      OKToConsiderClicks = false;
-    }
 
     background(outerBackgroundColor);
     // Currently the whole of the text area is repainted each frame,
     // which is quite wasteful, we'll have to optimize this later on
     theTextArea.draw(this);
+
+    if (!frame.isFocused() && frameCount > 30) {
+      OKToConsiderClicks = false;
+      frameRate(2);
+      resetMatrix();
+      noStroke();
+
+      // now draw an opaque layer that gives the impression that the app
+      // is in sleep mode. This is done by drawing a semitransparent black
+      // and a semitransparent white layer on top of each other
+      // Plus we draw some diagonal lines as well to make it a bit nicer
+      fill(0, 90);
+      rect(0, 0, width, height);
+      fill(205, 95);
+      rect(0, 0, width, height);
+      // diagonal lines
+      stroke(255, 10);
+      strokeWeight(3);
+      for (int i = 0; i<105;i++)
+        line(0, i*10, i*10, 0);
+    }
+    else {
+      frameRate(30);
+    }
   }
 
   public void doTheTranslation() {
@@ -354,9 +385,9 @@ public class P5Nitro extends PApplet {
         MainFile = MainFile.replaceAll("//ifNekoStartComment", "/*nekoStartComment").replaceAll("//ifNekoEndComment", "nekoEndComment*/").replaceAll("SKETCHWIDTH", Translator.frameSizeXFromSource+"").replaceAll("SKETCHHEIGHT", Translator.frameSizeYFromSource+"").replaceAll("FRAMERATE", Translator.frameRateFromSource+"");
         FileLoaderAndSaver.saveFile( new File(outputFileName), MainFile, this);
 
-        if (System.getProperty("os.name").toLowerCase().indexOf("mac") != -1)
+        if (PApplet.platform == PApplet.MACOSX)
           ShellCommandExecutor.runCommandInDirectory("./buildTheBinaries.sh", compiledSketchNekoDirectory);
-        else if (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1)
+        else if (PApplet.platform == PApplet.LINUX)
           ShellCommandExecutor.runCommandInDirectory("./buildTheBinariesLinux.sh", compiledSketchNekoDirectory);
 
         println("chmodding the build binaries script");
@@ -371,9 +402,9 @@ public class P5Nitro extends PApplet {
         try {  
           File theDirectory = new File(compiledSketchNekoDirectory);
           Process p;
-          if (System.getProperty("os.name").toLowerCase().indexOf("mac") != -1)
+          if (PApplet.platform == PApplet.MACOSX)
             p = Runtime.getRuntime().exec("./launchNekoVM.sh", null, theDirectory);
-          else if (System.getProperty("os.name").toLowerCase().indexOf("linux") != -1)
+          else if (PApplet.platform == PApplet.LINUX)
             p = Runtime.getRuntime().exec("./launchNekoVMLinux.sh", null, theDirectory);
         } 
         catch (IOException e) {  
@@ -397,13 +428,15 @@ public class P5Nitro extends PApplet {
   }
 
   void keyPressed() {
+    println((int)key);
+    println((int)keyCode);
     if (key == PConstants.CODED) {
       if (keyCode == PConstants.CONTROL) {
         control = true;
         return;
       }
     } 
-    theTextArea.keyPressed(key, keyCode, control);
+    theTextArea.keyPressed(key, keyCode, control, this);
   }
 
   void keyReleased() {
