@@ -2,7 +2,9 @@ Examples
 =====
 
 
-"Suerposition" by [Evan Raskob aka PixelPusher](http://pixelist.info/)
+--------------------------
+
+"Superposition" by [Evan Raskob aka PixelPusher](http://pixelist.info/)
 
 ...also found on [sketchPatch](http://www.sketchpatch.net/view/Kcijupo6Snp/)
 
