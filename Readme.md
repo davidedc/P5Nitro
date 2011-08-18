@@ -4,7 +4,8 @@ P5Nitro
 Overview
 --------
 
-P5Nitro lets you create small processing sketches and put them on your phone.
+P5Nitro lets you run small processing sketches and put them on your phone.
+You can see some examples [here](https://github.com/davidedc/P5Nitro/blob/master/Docs/Examples.md)
 
 How to use it
 ----------------
@@ -18,6 +19,7 @@ How to use it
   - Open the XCode project with XCode and deploy if you want
 
 It's also possible to make executables that work on windows/linux/osx and flash - manuals for those cases still have to be written.
+
 
 The bare truth
 --------------
