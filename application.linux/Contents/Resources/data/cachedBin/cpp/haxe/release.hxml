@@ -1,9 +1,0 @@
--main ApplicationMain 
--D nme_install_tool
--cp .
--lib nme
--cp bin/cpp/haxe
--cpp bin/cpp/bin
---remap flash:nme
-
-

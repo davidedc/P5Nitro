@@ -1,6 +1,0 @@
-cpp
-haxe_207
-nme
-nme_install_tool
-true
-/usr/lib/haxe/lib/hxcpp/2,07,0/
